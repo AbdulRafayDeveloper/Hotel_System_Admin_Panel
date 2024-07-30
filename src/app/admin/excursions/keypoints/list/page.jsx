@@ -2,15 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash } from 'react-icons/fa';
 import Link from 'next/link';
-//import Header from '../../components/Header';
 import ReactPaginate from 'react-paginate';
 import axios from "axios"
 import Swal from 'sweetalert2';
 import { FaPlus, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Loading from './loading';
-//import LinkingWithSidebar from '../../components/LinkingWithSidebar'
-//import { decodeJWT } from "../../components/DecodeJWT";
-import LinkingWithSidebar from '../../../components/LinkingWithSidebar'
+import LinkingWithSidebar from '../../../components/secondLayer/LinkingWithSidebar';
 import Header from '../../../components/Header'
 import { useRouter } from 'next/navigation';
 import {decodeJWT} from '../../../components/DecodeJWT'

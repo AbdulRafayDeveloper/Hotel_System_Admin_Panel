@@ -23,7 +23,11 @@ function LinkingWithSidebar() {
                 hotel_transport="../../../admin/hotel_transport/list"
                 roomAmenities="../../../admin/roomAmenities/list"
                 seaAndBeach="../../../admin/seaAndBeach/list"
-                staff="../../../admin/staff/list"></Sidebar>
+                staff="../../../admin/staff/list"
+                excursion="../../../admin/excursions/list"
+                excursionKeyPoints="../../../admin/excursions/keypoints/list"
+                excursionCategories="../../../admin/excursions/category/list"
+            ></Sidebar>
         </div >
     )
 }

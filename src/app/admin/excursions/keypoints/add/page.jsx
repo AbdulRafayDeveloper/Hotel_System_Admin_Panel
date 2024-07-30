@@ -7,11 +7,11 @@ import { useRouter } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { decodeJWT } from '../../../components/DecodeJWT';
-import LinkingWithSidebar from '../../../components/LinkingWithSidebar';
+import LinkingWithSidebar from '../../../components/secondLayer/LinkingWithSidebar';
 
 function Page() {
     const router = useRouter();
-    const [loading, setLoading] = useState(false); // State to handle loading
+    const [loading, setLoading] = useState(false);
     const [formdata, setFormData] = useState({
         color: "",
         label: ""
@@ -34,7 +34,7 @@ function Page() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true); // Set loading to true when form is submitted
+        setLoading(true);
 
         if (!formdata.label) {
             toast.error('Please fill all required fields');
@@ -78,7 +78,7 @@ function Page() {
                 text: error.response ? error.response.data.message : "An error occurred",
             });
         } finally {
-            setLoading(false); // Reset loading when API call completes
+            setLoading(false);
         }
     }
 
@@ -118,7 +118,7 @@ function Page() {
                                                 name="color"
                                                 id="color"
                                                 onChange={(e) => setFormData({ ...formdata, color: e.target.value })}
-                                                value={formdata.color || '#000000'}  // Default to black if no color
+                                                value={formdata.color || '#000000'} 
                                             />
                                             <input
                                                 type="text"
