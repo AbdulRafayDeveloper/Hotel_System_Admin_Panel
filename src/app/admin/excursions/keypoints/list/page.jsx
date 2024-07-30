@@ -127,7 +127,7 @@ function Page() {
                         <h2 className="text-2xl font-medium mb-3 text-black">Excursions Keypoints List</h2>
                         <div className='flex justify-between items-center mb-4'>
                             <div className='flex'>
-                                <Link href="../../../admin/hotelBar/add" className='text-sm w-28 h-8 flex items-center justify-center border border-blue-600 bg-white mr-3 rounded-xl transition duration-300 ease-in-out transform hover:scale-105 shadow-sm' passHref>
+                                <Link href="../../../admin/excursions/keypoints/add" className='text-sm w-28 h-8 flex items-center justify-center border border-blue-600 bg-white mr-3 rounded-xl transition duration-300 ease-in-out transform hover:scale-105 shadow-sm' passHref>
                                     <span className='text-blue-600 font-medium'>Add New</span>
                                     <FaPlus className="text-blue-600 ml-2 mb-0" />
                                 </Link>
