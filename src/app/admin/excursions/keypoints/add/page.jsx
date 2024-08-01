@@ -37,7 +37,12 @@ function Page() {
         setLoading(true);
 
         if (!formdata.label) {
-            toast.error('Please fill all required fields');
+            toast.error('Please fill in label field');
+            setLoading(false);
+            return;
+        }
+        if (!formdata.icon) {
+            toast.error('Please fill in icon field');
             setLoading(false);
             return;
         }

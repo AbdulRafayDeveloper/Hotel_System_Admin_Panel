@@ -11,6 +11,7 @@ import LinkingWithSidebar from '../../../components/secondLayer/LinkingWithSideb
 import Header from '../../../components/Header'
 import { useRouter } from 'next/navigation';
 import {decodeJWT} from '../../../components/DecodeJWT'
+import Image from 'next/image';
 
 function Page() {
     const router = useRouter();
@@ -163,7 +164,10 @@ function Page() {
                                             <tr className="hover:bg-gray-100">
                                                 <td className="text-center border border-gray-300 text-gray-900 p-1">{index + 1}</td>
                                                 <td className="text-center border border-gray-300 text-gray-900 p-1">{element.label}</td>
-                                                <td className="text-center border border-gray-300 text-gray-900 p-1">{element.icon}</td>
+                                                <td className="text-center border border-gray-300 p-1 text-gray-900">
+                                                    <Image src={`${element.icon}`} alt="employee pic" width={50} height={50} className='mx-auto' />
+                                                </td>
+
                                                 <td className="text-center border border-gray-300 p-1">
                                                     <div className='flex flex-row space-x-3 justify-center'>
                                                         <button onClick={() => handleDelete(element._id)} className="text-red-600 hover:text-red-800">
