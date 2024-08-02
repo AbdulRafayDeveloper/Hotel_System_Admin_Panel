@@ -16,16 +16,14 @@ function Page() {
         icon: "",
         label: ""
     });
-    const [iconList, setIconList] = useState([]); // Initialize as an empty array
-    const [selectedIconName, setSelectedIconName] = useState('');
+    const [iconList, setIconList] = useState([]);
+    const [selectedIcon, setSelectedIcon] = useState(null);
 
     useEffect(() => {
-        // Fetch the list of icons from the API
         const fetchIcons = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/api/icons');
                 setIconList(response.data || []);
-                console.log(response.data); // Ensure icons is an array of objects
             } catch (error) {
                 console.error("Failed to fetch icons:", error);
                 toast.error('Failed to fetch icon list');
@@ -42,6 +40,12 @@ function Page() {
         }
     }, [router]);
 
+    const handleIconSelect = (icon) => {
+        setSelectedIcon(icon);
+        const iconPath = icon.icon.split('5000')[1];
+        setFormData({ ...formdata, icon: iconPath });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -53,7 +57,7 @@ function Page() {
         }
 
         try {
-			console.log(formdata)
+            console.log(formdata);
             const response = await axios.post('http://localhost:5000/api/excursions/categories', formdata, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,41 +116,21 @@ function Page() {
                                         />
                                     </div>
                                     <div className="flex-1">
-										<label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="icon">
-											Icon
-										</label>
-										<div className="flex items-center space-x-2">
-											<select
-												className="block w-full py-2 px-3 border rounded shadow-md"
-												name="icon"
-												id="icon"
-												onChange={(e) => {
-													const selectedIcon = e.target.value;
-													
-													const iconPath = selectedIcon.split('5000')[1];
-													setFormData({ ...formdata, icon: iconPath });
-													setSelectedIconName(iconPath); 
-												}}
-												value={formdata.icon}
-												placeholder={selectedIconName}
-											>
-												<option value="" className='text-gray-700'>Select an icon</option>
-												{iconList.length > 0 ? (
-													iconList.map((icon) => {
-														
-														const iconPath = icon.icon.split('5000')[1];
-														return (
-															<option key={icon._id} className='text-gray-700' value={icon.icon}>
-																{iconPath}
-															</option>
-														);
-													})
-												) : (
-													<option value="">No icons available</option>
-												)}
-											</select>
-										</div>
-									</div>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="icon">
+                                            Icon
+                                        </label>
+                                        <div className="grid grid-cols-7">
+                                            {iconList.map((icon, index) => (
+                                                <div 
+                                                    key={index} 
+                                                    className={`p-2 cursor-pointer ${selectedIcon === icon ? 'ring-2 ring-blue-500' : ''}`}
+                                                    onClick={() => handleIconSelect(icon)}
+                                                >
+                                                    <img src={icon.icon} alt="icon" className="w-12 h-12 object-cover" />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="flex items-center justify-end mt-8">
                                     <button
