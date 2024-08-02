@@ -38,7 +38,7 @@ function Page() {
         withGuider: false,
         withBus: false,
         ticketPrice: 0,
-        priceFor: [{ sortByAge: "", price: "" }],
+        priceFor:{ adult: 0, child: 0, retired: 0, student: 0 },
         excursionType: "",
         keyPoints: [],
         consider: [""],
@@ -149,6 +149,20 @@ function Page() {
         }));
     };
 
+    const handlePriceForChange = (e) => {
+        const { name, value } = e.target;
+    
+        // Update the priceFor object within formData state
+        setFormData(prevState => ({
+            ...prevState,
+            priceFor: {
+                ...prevState.priceFor,
+                [name]: parseFloat(value) || 0
+            }
+        }));
+    };
+    
+    
     const handleCategoryChange = (e) => {
         const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
         setFormData(prev => {
@@ -170,20 +184,6 @@ function Page() {
                 ...prev.typeOfVisit,
                 [name]: value
             }
-        }));
-    };
-
-    const handlePriceForChange = (index, event) => {
-        const { name, value } = event.target;
-        const newPriceFor = [...formData.priceFor];
-        newPriceFor[index] = { ...newPriceFor[index], [name]: value };
-        setFormData(prev => ({ ...prev, priceFor: newPriceFor }));
-    };
-
-    const addPriceFor = () => {
-        setFormData(prev => ({
-            ...prev,
-            priceFor: [...prev.priceFor, { sortByAge: "", price: "" }]
         }));
     };
 
@@ -327,6 +327,60 @@ function Page() {
         e.preventDefault();
         let isValid = true;
 
+        let errorMessage = '';
+
+        // Define required fields and nested fields
+        const requiredFields = [
+            'title',
+            'address.country',
+            'address.region',
+            'address.city',
+            'address.street',
+            'address.house',
+            'address.building',
+            'departure',
+            'arrival',
+            'description',
+            'howToWork',
+            'typeOfVisit.typeOf',
+            'typeOfVisit.maxPeople',
+            'duration',
+            'ticketPrice',
+            'excursionType',
+            'keyPoints',
+            'categories',
+            'goodPlaces',
+            'priceDetail.include',
+            'priceDetail.uninclude',
+            'goodPlaceThumbs'
+        ];
+
+        // Check required fields
+        requiredFields.forEach((field) => {
+            const fieldParts = field.split('.');
+            let value = formData;
+
+            fieldParts.forEach(part => {
+                value = value && value[part];
+            });
+
+            if (value === undefined || value === null || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && !Object.keys(value).length)) {
+                isValid = false;
+                errorMessage = 'Please fill out all required fields.';
+            }
+        });
+
+        // Check numeric fields
+        const numericFields = ['duration', 'ticketPrice'];
+        numericFields.forEach((field) => {
+            const value = formData[field];
+            if (isNaN(value) || value <= 0) {
+                isValid = false;
+                errorMessage = 'Please enter valid numbers for duration and ticket price.';
+            }
+        });
+
+        
         if (isValid) {
             try {
                 setLoading(true);
@@ -776,36 +830,54 @@ function Page() {
                                         />
                                     </div>
 
-                                    <div className="flex flex-col col-span-2">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2">Price For</label>
-                                        {formData.priceFor.map((item, index) => (
-                                            <div key={index} className="flex gap-4 mb-4">
-                                                <input
-                                                    type="text"
-                                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                    name="sortByAge"
-                                                    placeholder="Sort by Age"
-                                                    value={item.sortByAge}
-                                                    onChange={(e) => handlePriceForChange(index, e)}
-                                                />
-                                                <input
-                                                    type="text"
-                                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                    name="price"
-                                                    placeholder="Price"
-                                                    value={item.price}
-                                                    onChange={(e) => handlePriceForChange(index, e)}
-                                                />
-                                            </div>
-                                        ))}
-                                        <button
-                                            type="button"
-                                            className="bg-blue-500 text-white py-2 px-4 rounded"
-                                            onClick={addPriceFor}
-                                        >
-                                            Add More Price For
-                                        </button>
-                                    </div>
+                                    <div className="flex flex-col">
+    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="adultPrice">Adult Price</label>
+    <input
+        type="number"
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        name="adult"
+        id="adultPrice"
+        onChange={handlePriceForChange}
+        value={formData.priceFor.adult || ''}
+        placeholder="Enter price for adults"
+    />
+</div>
+<div className="flex flex-col">
+    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="childPrice">Child Price</label>
+    <input
+        type="number"
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        name="child"
+        id="childPrice"
+        onChange={handlePriceForChange}
+        value={formData.priceFor.child || ''}
+        placeholder="Enter price for children"
+    />
+</div>
+<div className="flex flex-col">
+    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="retiredPrice">Retired Price</label>
+    <input
+        type="number"
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        name="retired"
+        id="retiredPrice"
+        onChange={handlePriceForChange}
+        value={formData.priceFor.retired || ''}
+        placeholder="Enter price for retired"
+    />
+</div>
+<div className="flex flex-col">
+    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="studentPrice">Student Price</label>
+    <input
+        type="number"
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        name="student"
+        id="studentPrice"
+        onChange={handlePriceForChange}
+        value={formData.priceFor.student || ''}
+        placeholder="Enter price for students"
+    />
+</div>
 
                                     {/* Extra fields */}
 
