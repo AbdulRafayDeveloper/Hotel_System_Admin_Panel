@@ -1,5 +1,5 @@
 "use client";
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/app/admin/components/Header';
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -9,12 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import LinkingWithSidebar from '../../components/LinkingWithSidebar';
 import { decodeJWT } from "../../components/DecodeJWT";
 
-
 function Page() {
-
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-
     const [keyPointsOptions, setkeyPointsOptions] = useState([]);
     const [categoriesOptions, setCategory] = useState([]);
 
@@ -48,127 +45,13 @@ function Page() {
         program: [{ description: "", duration: 0 }],
         start: [0],
         categories: [],
-        goodPlaces: [{ title: "", description: "" }],
-        goodPlaceThumbs: [null],
-        priceDetail:{
+        goodPlaces: [{ "title": "", "description": "" }],
+        goodPlaceThumbs: [],
+        priceDetail: {
             include: [""],
             uninclude: [""]
         }
     });
-
-    const handleTicketOfVisitChange = (event) => {
-        const { name, value } = event.target;
-        setFormData(prev => ({
-            ...prev,
-            typeOfVisit: {
-                ...prev.typeOfVisit,
-                [name]: value
-            }
-        }));
-    };
-    
-    const handleThumbfileChange = (event) => {
-        const newFiles = Array.from(event.target.files); 
-        setFormData(prev => ({
-            ...prev,
-            thumbs: [...prev.thumbs, ...newFiles] 
-        }));
-    };
-    
-    // Update a specific item in the include or uninclude arrays
-    const handlePriceDetailChange = (arrayName, arrayIndex, value) => {
-        setFormData(prev => ({
-            ...prev,
-            priceDetail: {
-                ...prev.priceDetail,
-                [arrayName]: prev.priceDetail[arrayName].map((item, i) =>
-                    i === arrayIndex ? value : item
-                )
-            }
-        }));
-    };
-
-    // Add a new entry to include and uninclude arrays
-    const addPriceDetail = () => {
-        setFormData(prev => ({
-            ...prev,
-            priceDetail: {
-                include: [...prev.priceDetail.include, ""],
-                uninclude: [...prev.priceDetail.uninclude, ""]
-            }
-        }));
-    };
-
-    
-    const handleStartChange = (index, event) => {
-        const newStart = [...formData.start];
-        newStart[index] = event.target.value;
-        setFormData(prev => ({ ...prev, start: newStart }));
-    };
-    
-    const addStart = () => {
-        setFormData(prev => ({ ...prev, start: [...prev.start, ""] }));
-    };
-    
-    const removeStart = (index) => {
-        const newStart = formData.start.filter((_, i) => i !== index);
-        setFormData(prev => ({ ...prev, start: newStart }));
-    };
-    // Handler for input change
-    const handleConsiderChange = (index, event) => {
-        const newConsider = [...formData.start];
-        newConsider[index] = event.target.value;
-        setFormData(prev => ({ ...prev, consider: newConsider }));
-    };
-    
-    const addConsider = () => {
-        setFormData(prev => ({ ...prev, consider: [...prev.consider, ""] }));
-    };
-    
-    const removeConsider = (index) => {
-        const newConsider = formData.consider.filter((_, i) => i !== index);
-        setFormData(prev => ({ ...prev, consider: newConsider }));
-    };
-    //
-
-    const handleGoodPlaceChange = (index, e) => {
-        const { name, value } = e.target;
-        const updatedGoodPlaces = [...formData.goodPlaces];
-        updatedGoodPlaces[index] = { ...updatedGoodPlaces[index], [name]: value };
-        setFormData(prev => ({ ...prev, goodPlaces: updatedGoodPlaces }));
-    };
-    
-    const handleThumbChange = (index, e) => {
-        const file = e.target.files[0];
-        const updatedThumbs = [...formData.goodPlaceThumbs];
-        updatedThumbs[index] = file;
-        setFormData(prev => ({ ...prev, goodPlaceThumbs: updatedThumbs }));
-    };
-    
-    const addGoodPlace = () => {
-        setFormData(prev => ({
-            ...prev,
-            goodPlaces: [...prev.goodPlaces, { title: "", description: "" }],
-            goodPlaceThumbs: [...prev.goodPlaceThumbs, null],
-        }));
-    };
-    
-    // price details
-    const handleCategoryChange = (e) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-        
-        // Combine the new selections with the existing ones
-        setFormData(prev => {
-            // Filter out duplicate categories
-            const updatedCategories = [
-                ...new Set([
-                    ...prev.categories,
-                    ...selectedOptions
-                ])
-            ];
-            return { ...prev, categories: updatedCategories };
-        });
-    };
 
     useEffect(() => {
         const decodedData = decodeJWT();
@@ -201,6 +84,36 @@ function Page() {
         fetchCategory();
     }, [router]);
 
+    const handleThumbfileChange = (event) => {
+        const newFiles = Array.from(event.target.files);
+        setFormData(prev => ({
+            ...prev,
+            thumbs: [...prev.thumbs, ...newFiles]
+        }));
+    };
+
+    const handleGoodPlaceChange = (index, e) => {
+        const { name, value } = e.target;
+        const updatedGoodPlaces = [...formData.goodPlaces];
+        updatedGoodPlaces[index] = { ...updatedGoodPlaces[index], [name]: value };
+        setFormData(prev => ({ ...prev, goodPlaces: updatedGoodPlaces }));
+    };
+
+    const handleThumbChange = (index, e) => {
+        const file = e.target.files[0];
+        const updatedThumbs = [...formData.goodPlaceThumbs];
+        updatedThumbs[index] = file;
+        setFormData(prev => ({ ...prev, goodPlaceThumbs: updatedThumbs }));
+    };
+
+    const addGoodPlace = () => {
+        setFormData(prev => ({
+            ...prev,
+            goodPlaces: [...prev.goodPlaces, { "title": "", "description": "" }],
+            goodPlaceThumbs: [...prev.goodPlaceThumbs, null],
+        }));
+    };
+
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
         if (type === "checkbox") {
@@ -210,6 +123,54 @@ function Page() {
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
+    };
+
+    // Update a specific item in the include or uninclude arrays
+    const handlePriceDetailChange = (arrayName, arrayIndex, value) => {
+        setFormData(prev => ({
+            ...prev,
+            priceDetail: {
+                ...prev.priceDetail,
+                [arrayName]: prev.priceDetail[arrayName].map((item, i) =>
+                    i === arrayIndex ? value : item
+                )
+            }
+        }));
+    };
+
+    // Add a new entry to include and uninclude arrays
+    const addPriceDetail = () => {
+        setFormData(prev => ({
+            ...prev,
+            priceDetail: {
+                include: [...prev.priceDetail.include, ""],
+                uninclude: [...prev.priceDetail.uninclude, ""]
+            }
+        }));
+    };
+
+    const handleCategoryChange = (e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+        setFormData(prev => {
+            const updatedCategories = [
+                ...new Set([
+                    ...prev.categories,
+                    ...selectedOptions
+                ])
+            ];
+            return { ...prev, categories: updatedCategories };
+        });
+    };
+
+    const handleTicketOfVisitChange = (event) => {
+        const { name, value } = event.target;
+        setFormData(prev => ({
+            ...prev,
+            typeOfVisit: {
+                ...prev.typeOfVisit,
+                [name]: value
+            }
+        }));
     };
 
     const handlePriceForChange = (index, event) => {
@@ -226,6 +187,36 @@ function Page() {
         }));
     };
 
+    const handleStartChange = (index, event) => {
+        const newStart = [...formData.start];
+        newStart[index] = event.target.value;
+        setFormData(prev => ({ ...prev, start: newStart }));
+    };
+
+    const addStart = () => {
+        setFormData(prev => ({ ...prev, start: [...prev.start, ""] }));
+    };
+
+    const removeStart = (index) => {
+        const newStart = formData.start.filter((_, i) => i !== index);
+        setFormData(prev => ({ ...prev, start: newStart }));
+    };
+
+    // Handler for input change
+    const handleConsiderChange = (index, event) => {
+        const newConsider = [...formData.start];
+        newConsider[index] = event.target.value;
+        setFormData(prev => ({ ...prev, consider: newConsider }));
+    };
+
+    const addConsider = () => {
+        setFormData(prev => ({ ...prev, consider: [...prev.consider, ""] }));
+    };
+
+    const removeConsider = (index) => {
+        const newConsider = formData.consider.filter((_, i) => i !== index);
+        setFormData(prev => ({ ...prev, consider: newConsider }));
+    };
 
     const handlekeyPointsChange = (e) => {
         const selectedOptions = Array.from(e.target.selectedOptions, option => ({
@@ -244,124 +235,156 @@ function Page() {
         setFormData(prev => ({ ...prev, keyPoints: updatedkeyPoints }));
     };
 
-
     const handleProgramChange = (index, event) => {
         const { name, value } = event.target;
         const newProgram = [...formData.program];
         newProgram[index] = { ...newProgram[index], [name]: value };
         setFormData(prev => ({ ...prev, program: newProgram }));
     };
-    
+
     const addProgram = () => {
         setFormData(prev => ({ ...prev, program: [...prev.program, { description: "", duration: 0 }] }));
     };
-    
+
     const removeProgram = (index) => {
         const newProgram = [...formData.program];
         newProgram.splice(index, 1);
         setFormData(prev => ({ ...prev, program: newProgram }));
     };
-    
+
+    // Prepare data for submission
+    // const formDataToSend = new FormData();
+    // formDataToSend.append('title', formData.title);
+    // formDataToSend.append('address', (formData.address));
+    // formDataToSend.append('thumbs', formData.thumbs);
+    // formDataToSend.append('departure', formData.departure);
+    // formDataToSend.append('arrival', formData.arrival);
+    // formDataToSend.append('description', formData.description);
+    // formDataToSend.append('howToWork', formData.howToWork);
+    // formDataToSend.append('typeOfVisit', (formData.typeOfVisit));
+    // formDataToSend.append('duration', formData.duration);
+    // formDataToSend.append('withGuider', formData.withGuider);
+    // formDataToSend.append('withBus', formData.withBus);
+    // formDataToSend.append('ticketPrice', formData.ticketPrice);
+    // formDataToSend.append('priceFor', (formData.priceFor));
+    // formDataToSend.append('excursionType', formData.excursionType);
+    // formDataToSend.append('keyPoints', (formData.keyPoints));
+    // formDataToSend.append('consider', (formData.consider));
+    // formDataToSend.append('program', (formData.program));
+    // formDataToSend.append('start', (formData.start));
+    // formDataToSend.append('categories', (formData.categories));
+
+    /*formData.goodPlaces.forEach((place, index) => {
+        formDataToSend.append(`goodPlaces[${index}][title]`, place.title);
+        formDataToSend.append(`goodPlaces[${index}][description]`, place.description);
+        if (formData.goodPlaceThumbs[index]) {
+            formDataToSend.append(`goodPlaceThumbs[${index}]`, formData.goodPlaceThumbs[index]);
+        }
+    });*/
+
+    // formDataToSend.append('priceDetail', (formData.priceDetail));
+    // console.log('Form title:', formData.title)
+    // console.log('FormData: ', formDataToSend.title)
+    // console.log("data thumbs", formData.thumbs)
+    // console.log("data thumbs", formData.goodPlaceThumbs)
+    // Send POST request
+
+    // let errorMessage = "";
+
+    // Validate required fields and default values
+    /* if (!formData.title || !formData.address.country || !formData.address.region || !formData.address.city ||
+         !formData.address.street || !formData.address.house || !formData.address.building ||
+         formData.duration === "" || formData.withGuider === undefined || formData.withBus === undefined ||
+         formData.ticketPrice === null || formData.excursionType === "" ||
+         formData.keyPoints.length === 0 || formData.consider.length === 0 ||
+         formData.start.length === 0 || formData.priceFor.length === 0 || formData.program.length === 0  || formData.priceDetail.include.length === 0 || 
+         formData.priceDetail.uninclude.length === 0) {
+         
+         isValid = false;
+         errorMessage = "Please fill in all required fields.";
+     }*/
+
+    //formData.goodPlaces.length === 0
+
+    // Validate goodPlaces and goodPlaceThumbs
+    /* formData.goodPlaces.forEach((place, index) => {
+         if (!place.title || !place.description || !formData.goodPlaceThumbs[index]) {
+             isValid = false;
+             errorMessage = "Each good place must have a title, description, and thumbnail.";
+         }
+     });
+ 
+     // Validate priceDetail include and uninclude
+     formData.priceDetail.include.forEach((include) => {
+         if (include && formData.priceDetail.uninclude.length === 0) {
+             isValid = false;
+             errorMessage = "If any include is added in price details, there must be at least one uninclude.";
+         }
+     });
+ */
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         let isValid = true;
-        let errorMessage = "";
-    
-        // Validate required fields and default values
-       /* if (!formData.title || !formData.address.country || !formData.address.region || !formData.address.city ||
-            !formData.address.street || !formData.address.house || !formData.address.building ||
-            formData.duration === "" || formData.withGuider === undefined || formData.withBus === undefined ||
-            formData.ticketPrice === null || formData.excursionType === "" ||
-            formData.keyPoints.length === 0 || formData.consider.length === 0 ||
-            formData.start.length === 0 || formData.priceFor.length === 0 || formData.program.length === 0  || formData.priceDetail.include.length === 0 || 
-            formData.priceDetail.uninclude.length === 0) {
-            
-            isValid = false;
-            errorMessage = "Please fill in all required fields.";
-        }*/
 
-        //formData.goodPlaces.length === 0
-    
-        // Validate goodPlaces and goodPlaceThumbs
-       /* formData.goodPlaces.forEach((place, index) => {
-            if (!place.title || !place.description || !formData.goodPlaceThumbs[index]) {
-                isValid = false;
-                errorMessage = "Each good place must have a title, description, and thumbnail.";
-            }
-        });
-    
-        // Validate priceDetail include and uninclude
-        formData.priceDetail.include.forEach((include) => {
-            if (include && formData.priceDetail.uninclude.length === 0) {
-                isValid = false;
-                errorMessage = "If any include is added in price details, there must be at least one uninclude.";
-            }
-        });
-    */
         if (isValid) {
             try {
                 setLoading(true);
-    
-                // Prepare data for submission
-                const formDataToSend = new FormData();
-                formDataToSend.append('title', formData.title);
-                formDataToSend.append('address',(formData.address));
-                formDataToSend.append('thumbs', formData.thumbs);
-                formDataToSend.append('departure', formData.departure);
-                formDataToSend.append('arrival', formData.arrival);
-                formDataToSend.append('description', formData.description);
-                formDataToSend.append('howToWork', formData.howToWork);
-                formDataToSend.append('typeOfVisit', (formData.typeOfVisit));
-                formDataToSend.append('duration', formData.duration);
-                formDataToSend.append('withGuider', formData.withGuider);
-                formDataToSend.append('withBus', formData.withBus);
-                formDataToSend.append('ticketPrice', formData.ticketPrice);
-                formDataToSend.append('priceFor', (formData.priceFor));
-                formDataToSend.append('excursionType', formData.excursionType);
-                formDataToSend.append('keyPoints',(formData.keyPoints));
-                formDataToSend.append('consider',(formData.consider));
-                formDataToSend.append('program', (formData.program));
-                formDataToSend.append('start', (formData.start));
-                formDataToSend.append('categories', (formData.categories));
-                
-                /*formData.goodPlaces.forEach((place, index) => {
-                    formDataToSend.append(`goodPlaces[${index}][title]`, place.title);
-                    formDataToSend.append(`goodPlaces[${index}][description]`, place.description);
-                    if (formData.goodPlaceThumbs[index]) {
-                        formDataToSend.append(`goodPlaceThumbs[${index}]`, formData.goodPlaceThumbs[index]);
-                    }
-                });*/
-    
-                formDataToSend.append('priceDetail', (formData.priceDetail));
-                console.log('Form data:',formData)
-                console.log('Form title:',formData.title)
-                console.log('FormData: ', formDataToSend.title)
-                console.log("data thumbs", formData.thumbs)
-                console.log("data thumbs", formData.goodPlaceThumbs)
-                // Send POST request
-                const response = await axios.post("http://localhost:5000/api/excursions", formData, {
+
+                const submissionData = new FormData();
+                formData.thumbs.forEach((file, index) => {
+                    submissionData.append('thumbs', file);
+                });
+
+                submissionData.append('title', JSON.stringify(formData.title));
+                submissionData.append('address', JSON.stringify(formData.address));
+                submissionData.append('goodPlaces', JSON.stringify(formData.goodPlaces));
+
+                formData.goodPlaceThumbs.forEach((file) => {
+                    submissionData.append('goodPlaceThumbs', file);
+                });
+
+                submissionData.append('priceDetail', JSON.stringify(formData.priceDetail));
+                submissionData.append('categories', JSON.stringify(formData.categories));
+                submissionData.append('departure', JSON.stringify(formData.departure));
+                submissionData.append('arrival', JSON.stringify(formData.arrival));
+                submissionData.append('description', JSON.stringify(formData.description));
+                submissionData.append('howToWork', JSON.stringify(formData.howToWork));
+                submissionData.append('typeOfVisit', JSON.stringify(formData.typeOfVisit));
+                submissionData.append('duration', formData.duration);
+                submissionData.append('withGuider', JSON.stringify(formData.withGuider));
+                submissionData.append('withBus', JSON.stringify(formData.withBus));
+                submissionData.append('ticketPrice', formData.ticketPrice);
+                submissionData.append('priceFor', JSON.stringify(formData.priceFor));
+                submissionData.append('excursionType', JSON.stringify(formData.excursionType));
+                submissionData.append('keyPoints', JSON.stringify(formData.keyPoints));
+                submissionData.append('consider', JSON.stringify(formData.consider));
+                submissionData.append('program', JSON.stringify(formData.program));
+                submissionData.append('start', JSON.stringify(formData.start));
+
+                submissionData.forEach((value, key) => {
+                    console.log(key, value);
+                });
+
+                const response = await axios.post("http://localhost:5000/api/excursions", submissionData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-                console.log(response)
-                // Handle success
-                console.log("Form submitted successfully:", response.data);
-                Swal.fire('Success!' , "Form Submitted successfully", 'success');
-    
+
+                console.log(response);
+                Swal.fire('Success!', "Form Submitted successfully", 'success');
+
             } catch (error) {
-                // Handle error
                 console.error("Error submitting form:", error);
-                Swal.fire('Error!' , "Form Not submitted", 'error');
+                Swal.fire('Error!', "Form Not submitted", 'error');
             } finally {
                 setLoading(false);
             }
         } else {
-            Swal.fire('Error!' , errorMessage, 'error');
+            Swal.fire('Error!', errorMessage, 'error');
         }
     };
-    
 
     return (
         <>
@@ -375,7 +398,6 @@ function Page() {
                             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-12 pb-4 mb-4 py-2 mt-2" encType='multipart/form-data' method='post'>
                                 <h1 className='text-2xl font-medium text-center pb-7 text-gray-800 pt-4'>Add Excursions</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    {/* Title */}
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="title">Title</label>
                                         <input
@@ -388,8 +410,6 @@ function Page() {
                                             value={formData.title}
                                         />
                                     </div>
-
-                                    {/* Country */}
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-country">Country</label>
                                         <select
@@ -407,7 +427,84 @@ function Page() {
                                             <option value="Abkhazia">Abkhazia</option>
                                         </select>
                                     </div>
-                                    {/* Good Place 
+                                    <div className="flex flex-col">
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-region">Region</label>
+                                        <input
+                                            type="text"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="address-region"
+                                            id="address-region"
+                                            onChange={(e) => setFormData(prev => ({
+                                                ...prev,
+                                                address: { ...prev.address, region: e.target.value }
+                                            }))}
+                                            placeholder="Enter region"
+                                            value={formData.address.region}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-city">City</label>
+                                        <input
+                                            type="text"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="address-city"
+                                            id="address-city"
+                                            onChange={(e) => setFormData(prev => ({
+                                                ...prev,
+                                                address: { ...prev.address, city: e.target.value }
+                                            }))}
+                                            placeholder="Enter city"
+                                            value={formData.address.city}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-street">Street</label>
+                                        <input
+                                            type="text"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="address-street"
+                                            id="address-street"
+                                            onChange={(e) => setFormData(prev => ({
+                                                ...prev,
+                                                address: { ...prev.address, street: e.target.value }
+                                            }))}
+                                            placeholder="Enter street"
+                                            value={formData.address.street}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-house">House</label>
+                                        <input
+                                            type="text"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="address-house"
+                                            id="address-house"
+                                            onChange={(e) => setFormData(prev => ({
+                                                ...prev,
+                                                address: { ...prev.address, house: e.target.value }
+                                            }))}
+                                            placeholder="Enter house"
+                                            value={formData.address.house}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-building">Building</label>
+                                        <input
+                                            type="text"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="address-building"
+                                            id="address-building"
+                                            onChange={(e) => setFormData(prev => ({
+                                                ...prev,
+                                                address: { ...prev.address, building: e.target.value }
+                                            }))}
+                                            placeholder="Enter building"
+                                            value={formData.address.building}
+                                        />
+                                    </div>
                                     <div className="flex flex-col mb-4">
                                         <h2 className="text-md font-semibold mb-2 text-gray-800">Add Good Place</h2>
                                         {formData.goodPlaces.map((place, index) => (
@@ -450,60 +547,72 @@ function Page() {
                                         <button
                                             type="button"
                                             className="bg-blue-500 text-white px-4 py-2 rounded shadow"
-                                            onClick={addGoodPlace}
-                                        >
+                                            onClick={addGoodPlace}>
                                             Add Another Good Place
                                         </button>
-                                        
-                                    </div>*/}
+                                    </div>
+                                    <div className="flex flex-col col-span-2">
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="thumbs">Thumbnails</label>
+                                        <input
+                                            type="file"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="thumbs"
+                                            id="thumbs"
+                                            onChange={handleThumbfileChange}
+                                            multiple
+                                        />
+                                        <div className="mt-4">
+                                            {formData.thumbs.length > 0 && (
+                                                <ul className="list-disc pl-5">
+                                                    {formData.thumbs.map((file, index) => (
+                                                        <li key={index} className="text-gray-700">{file.name}</li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    </div>
 
-                                    {/* Price Details */}
                                     <div className="flex flex-col mb-4">
-    <h2 className="text-md font-semibold mb-2 text-gray-800">Add Price Details</h2>
+                                        <h2 className="text-md font-semibold mb-2 text-gray-800">Add Price Details</h2>
 
-    {/* Includes Section */}
-    <div className="flex flex-col mb-2">
-        <label className="block text-gray-700 text-base font-semibold mb-2">Include</label>
-        {formData.priceDetail.include.map((include, i) => (
-            <div key={i} className="flex items-center mb-2">
-                <input
-                    type="text"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    value={include}
-                    onChange={(e) => handlePriceDetailChange("include", i, e.target.value)}
-                    placeholder="Enter Include"
-                />
-            </div>
-        ))}
-    </div>
+                                        <div className="flex flex-col mb-2">
+                                            <label className="block text-gray-700 text-base font-semibold mb-2">Include</label>
+                                            {formData.priceDetail.include.map((include, i) => (
+                                                <div key={i} className="flex items-center mb-2">
+                                                    <input
+                                                        type="text"
+                                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                        value={include}
+                                                        onChange={(e) => handlePriceDetailChange("include", i, e.target.value)}
+                                                        placeholder="Enter Include"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
 
-    {/* Unincludes Section */}
-    <div className="flex flex-col mb-2">
-        <label className="block text-gray-700 text-base font-semibold mb-2">Uninclude</label>
-        {formData.priceDetail.uninclude.map((uninclude, i) => (
-            <div key={i} className="flex items-center mb-2">
-                <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    value={uninclude}
-                    onChange={(e) => handlePriceDetailChange("uninclude", i, e.target.value)}
-                    placeholder="Enter Uninclude"
-                />
-            </div>
-        ))}
-    </div>
+                                        <div className="flex flex-col mb-2">
+                                            <label className="block text-gray-700 text-base font-semibold mb-2">Uninclude</label>
+                                            {formData.priceDetail.uninclude.map((uninclude, i) => (
+                                                <div key={i} className="flex items-center mb-2">
+                                                    <input
+                                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                        value={uninclude}
+                                                        onChange={(e) => handlePriceDetailChange("uninclude", i, e.target.value)}
+                                                        placeholder="Enter Uninclude"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
 
-    <button
-        type="button"
-        className="bg-green-500 text-white px-4 py-2 rounded shadow mt-4"
-        onClick={addPriceDetail}
-    >
-        Add Detail Entry
-    </button>
-</div>
+                                        <button
+                                            type="button"
+                                            className="bg-green-500 text-white px-4 py-2 rounded shadow mt-4"
+                                            onClick={addPriceDetail}
+                                        >
+                                            Add Detail Entry
+                                        </button>
+                                    </div>
 
-
-                                                                
-                                    {/* Category */}
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="categories">Categories</label>
                                         <select
@@ -521,7 +630,6 @@ function Page() {
                                             ))}
                                         </select>
 
-                                        {/* Display selected categories */}
                                         <div className="mt-4">
                                             <h2 className="text-lg font-semibold text-gray-800">Selected Categories:</h2>
                                             <ul className="list-disc pl-5 mt-2">
@@ -538,94 +646,6 @@ function Page() {
                                         </div>
                                     </div>
 
-                                    
-
-                                    {/* Region */}
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-region">Region</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-region"
-                                            id="address-region"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, region: e.target.value }
-                                            }))}
-                                            placeholder="Enter region"
-                                            value={formData.address.region}
-                                        />
-                                    </div>
-
-                                    {/* City */}
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-city">City</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-city"
-                                            id="address-city"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, city: e.target.value }
-                                            }))}
-                                            placeholder="Enter city"
-                                            value={formData.address.city}
-                                        />
-                                    </div>
-
-                                    {/* Street */}
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-street">Street</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-street"
-                                            id="address-street"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, street: e.target.value }
-                                            }))}
-                                            placeholder="Enter street"
-                                            value={formData.address.street}
-                                        />
-                                    </div>
-
-                                    {/* House */}
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-house">House</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-house"
-                                            id="address-house"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, house: e.target.value }
-                                            }))}
-                                            placeholder="Enter house"
-                                            value={formData.address.house}
-                                        />
-                                    </div>
-
-                                    {/* Building */}
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-building">Building</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-building"
-                                            id="address-building"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, building: e.target.value }
-                                            }))}
-                                            placeholder="Enter building"
-                                            value={formData.address.building}
-                                        />
-                                    </div>
-
-                                    {/* Departure */}
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="departure">Departure</label>
                                         <input
@@ -639,7 +659,6 @@ function Page() {
                                         />
                                     </div>
 
-                                    {/* Arrival */}
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="arrival">Arrival</label>
                                         <input
@@ -653,7 +672,6 @@ function Page() {
                                         />
                                     </div>
 
-                                    {/* Description */}
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="description">Description</label>
                                         <textarea
@@ -666,7 +684,6 @@ function Page() {
                                         />
                                     </div>
 
-                                    {/* How to Work */}
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="howToWork">How to Work</label>
                                         <textarea
@@ -679,10 +696,9 @@ function Page() {
                                         />
                                     </div>
 
-                                    {/* Type of Visit */}
                                     <div className="flex flex-col mb-4">
                                         <h2 className="text-md font-semibold mb-2 text-gray-800">Ticket Of Visit</h2>
-                                        
+
                                         <div className="flex flex-col mb-2">
                                             <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketTypeOf">Type Of</label>
                                             <input
@@ -710,8 +726,6 @@ function Page() {
                                         </div>
                                     </div>
 
-
-                                    {/* Duration */}
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="duration">Duration</label>
                                         <input
@@ -725,7 +739,6 @@ function Page() {
                                         />
                                     </div>
 
-                                    {/* With Guider */}
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="withGuider">With Guider</label>
                                         <input
@@ -738,7 +751,6 @@ function Page() {
                                         />
                                     </div>
 
-                                    {/* With Bus */}
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="withBus">With Bus</label>
                                         <input
@@ -751,7 +763,6 @@ function Page() {
                                         />
                                     </div>
 
-                                    {/* Ticket Price */}
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketPrice">Ticket Price</label>
                                         <input
@@ -765,7 +776,6 @@ function Page() {
                                         />
                                     </div>
 
-                                    {/* Price For */}
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2">Price For</label>
                                         {formData.priceFor.map((item, index) => (
@@ -797,7 +807,8 @@ function Page() {
                                         </button>
                                     </div>
 
-                                    {/* Excursion Type */}
+                                    {/* Extra fields */}
+
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="excursionType">Excursion Type</label>
                                         <input
@@ -810,31 +821,6 @@ function Page() {
                                             value={formData.excursionType}
                                         />
                                     </div>
-
-                                    {/* Thumbs */}
-                                    <div className="flex flex-col col-span-2">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="thumbs">Thumbnails</label>
-                                        <input
-                                            type="file"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="thumbs"
-                                            id="thumbs"
-                                            onChange={handleThumbfileChange}
-                                            multiple
-                                        />
-                                        <div className="mt-4">
-                                            {formData.thumbs.length > 0 && (
-                                                <ul className="list-disc pl-5">
-                                                    {formData.thumbs.map((file, index) => (
-                                                        <li key={index} className="text-gray-700">{file.name}</li>
-                                                    ))}
-                                                </ul>
-                                            )}
-                                        </div>
-                                    </div>
-
-
-                                    {/* keyPoints */}
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="keyPoints">keyPoints</label>
                                         <select
@@ -848,16 +834,14 @@ function Page() {
                                                 <option
                                                     key={index}
                                                     value={option.label}
-                                                    data-color={option.color}  
+                                                    data-color={option.color}
                                                 >
-                                                   {option.label} 
+                                                    {option.label}
                                                 </option>
-                                                
+
                                             ))}
                                         </select>
                                     </div>
-
-                                    {/* Display selected keyPoints with colors */}
                                     <div className="flex flex-col col-span-2 mt-4">
                                         <label className="block text-gray-700 text-base font-semibold mb-2">Selected keyPoints</label>
                                         <ul>
@@ -872,8 +856,6 @@ function Page() {
                                             ))}
                                         </ul>
                                     </div>
-
-                                    {/* Consider */ }
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2">Consider</label>
                                         {formData.consider.map((item, index) => (
@@ -902,7 +884,7 @@ function Page() {
                                             Add More Fields
                                         </button>
                                     </div>
-                                    {/* Program */}
+
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2">Program</label>
                                         {formData.program.map((item, index) => (
@@ -940,7 +922,6 @@ function Page() {
                                             Add More Program
                                         </button>
                                     </div>
-
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2">Start</label>
                                         {formData.start.map((item, index) => (
@@ -969,8 +950,6 @@ function Page() {
                                             Add More Start
                                         </button>
                                     </div>
-
-
                                 </div>
                                 <div className="flex justify-center">
                                     <button

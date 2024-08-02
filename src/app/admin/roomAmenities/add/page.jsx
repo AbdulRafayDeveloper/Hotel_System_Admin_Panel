@@ -49,7 +49,7 @@ function Page() {
             console.log("response.data: ", response.data)
             console.log("response.data: ", response.status);
 
-            if (response.status == 201) {
+            if (response.status == 200) {
                 Swal.fire({
                     icon: "success",
                     title: "Success",

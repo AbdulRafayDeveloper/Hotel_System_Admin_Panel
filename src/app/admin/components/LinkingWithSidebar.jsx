@@ -27,6 +27,7 @@ function LinkingWithSidebar() {
                 excursion="../../admin/excursions/list"
                 excursionKeyPoints="../../admin/excursions/keypoints/list"
                 excursionCategories="../../admin/excursions/category/list"
+                icons="../../admin/icons/list"
             ></Sidebar>
         </div >
     )

@@ -8,21 +8,19 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { decodeJWT } from '../../../components/DecodeJWT';
 import LinkingWithSidebar from '../../../components/secondLayer/LinkingWithSidebar';
+import { ChromePicker } from 'react-color';
 
 function Page() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formdata, setFormData] = useState({
-        color: "",
+        color: "#000000",
         label: ""
     });
-    const [colorcode, setcolorcode] = useState('#000000')
 
-    useEffect(()=>{
-        console.log('Form data color: ',formdata.color)
-        setcolorcode(formdata.color)
-        console.log('Set color :',colorcode)
-    },[])
+    const handleColorChange = (color) => {
+        setFormData({ ...formdata, color: color.hex });
+    };
 
     useEffect(() => {
         const decodedData = decodeJWT();
@@ -41,15 +39,11 @@ function Page() {
             setLoading(false);
             return;
         }
-        if (!formdata.icon) {
-            toast.error('Please fill in icon field');
+        if (!formdata.color) {
+            toast.error('Please fill in color field');
             setLoading(false);
             return;
         }
-
-        // Log formdata values
-        console.log("FormData color: ", formdata.color);
-        console.log("FormData label: ", formdata.label);
 
         try {
             const response = await axios.post('http://localhost:5000/api/excursions/keypoints', formdata, {
@@ -112,28 +106,15 @@ function Page() {
                                             placeholder="Enter label"
                                         />
                                     </div>
-                                    <div className="flex-1">
+                                    <div className="flex-1 justify-center">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="color">
                                             Color
                                         </label>
-                                        <div className="flex items-center space-x-2">
-                                            <input
-                                                type="color"
-                                                className="w-16 h-12 p-0 border rounded"
-                                                name="color"
-                                                id="color"
-                                                onChange={(e) => setFormData({ ...formdata, color: e.target.value })}
-                                                value={formdata.color || '#000000'} 
-                                            />
-                                            <input
-                                                type="text"
-                                                className="w-full py-2 px-3 border rounded"
-                                                name="colorcode"
-                                                id="colorcode"
-                                                value={colorcode} 
-                                                placeholder={formdata.color || '#000000'}
-                                            />
-                                        </div>
+                                        <ChromePicker
+                                            color={formdata.color}
+                                            onChangeComplete={handleColorChange}
+                                            className="text-center"
+                                        />
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-end mt-8">

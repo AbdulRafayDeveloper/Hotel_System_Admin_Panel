@@ -64,18 +64,14 @@ function Page() {
             if (result.isConfirmed) {
                 try {
                     const response = await axios.delete(`http://localhost:5000/api/icons/${id}`);
-                    console.log("response.data", response.data);
-                    console.log("response.data.data", response.data.data);
-                    console.log("response.data.status", response.data.status);
-                    console.log("response.status", response.status);
                     if (response.data.status == 200) {
                         if (statusChange == true) {
                             setStatusChange(false);
-							Swal.fire('Success', 'Deletion Completed', 'success');
+                            Swal.fire('Success', 'Deletion Completed', 'success');
                         }
                         else {
                             setStatusChange(true);
-							Swal.fire('Success', 'Deletion Completed', 'success');
+                            Swal.fire('Success', 'Deletion Completed', 'success');
                         }
                     } else {
                         Swal.fire('Error!', 'Deletion failed', 'error');
@@ -87,7 +83,6 @@ function Page() {
             }
         });
     };
-
 
     // Function to handle page change
     const handlePageChange = (selectedPage) => {
@@ -130,7 +125,7 @@ function Page() {
                         <h2 className="text-2xl font-medium mb-3 text-black">Icons List</h2>
                         <div className='flex justify-between items-center mb-4'>
                             <div className='flex'>
-                                <Link href="../../../admin/iconspage/add" className='text-sm w-28 h-8 flex items-center justify-center border border-blue-600 bg-white mr-3 rounded-xl transition duration-300 ease-in-out transform hover:scale-105 shadow-sm' passHref>
+                                <Link href="../../../admin/icons/add" className='text-sm w-28 h-8 flex items-center justify-center border border-blue-600 bg-white mr-3 rounded-xl transition duration-300 ease-in-out transform hover:scale-105 shadow-sm' passHref>
                                     <span className='text-blue-600 font-medium'>Add New</span>
                                     <FaPlus className="text-blue-600 ml-2 mb-0" />
                                 </Link>
@@ -149,7 +144,6 @@ function Page() {
                                 <thead className="bg-blue-400">
                                     <tr>
                                         <th className="p-2 border border-gray-300 text-white" style={{ width: "10%" }}>Sr#</th>
-                                       
                                         <th className="p-2 border border-gray-300 text-white" style={{ width: "40%" }}>Icons</th>
                                         <th className="p-2 border border-gray-300 text-white" style={{ width: "10%" }}>Action</th>
                                     </tr>
@@ -159,7 +153,7 @@ function Page() {
                                         displayedEmployee.map((element, index) => (
                                             <tr className="hover:bg-gray-100">
                                                 <td className="text-center border border-gray-300 text-gray-900 p-1">{index + 1}</td>
-                                                
+
                                                 <td className="text-center border border-gray-300 p-1 text-gray-900">
                                                     <Image src={`${element.icon}`} alt="employee pic" width={50} height={50} className='mx-auto' />
                                                 </td>

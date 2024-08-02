@@ -10,7 +10,7 @@ import Loading from './loading';
 import LinkingWithSidebar from '../../../components/secondLayer/LinkingWithSidebar';
 import Header from '../../../components/Header'
 import { useRouter } from 'next/navigation';
-import {decodeJWT} from '../../../components/DecodeJWT'
+import { decodeJWT } from '../../../components/DecodeJWT'
 import Image from 'next/image';
 
 function Page() {
@@ -39,29 +39,32 @@ function Page() {
                         console.log("result.data.data: ", result.data);
                         setexcursion(result.data);
                         setfilteredexcursion(result.data);
+                        setCategories(result.data);
                     } else {
-                        console.error("API response is not an array:", result.data.data);
+                        console.error("API response is not an array:", result.data);
                     }
                 })
                 .catch((error) => {
                     console.error("API error:", error);
-                });
-
-            // Fetch categories
-            await axios.get(`http://localhost:5000/api/excursion/categories`)
-                .then((result) => {
-                    console.log("Categories result.data: ", result.data);
-                    if (Array.isArray(result.data)) {
-                        setCategories(result.data);
-                    } else {
-                        console.error("Categories API response is not an array:", result.data);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Categories API error:", error);
                 }).finally(() => {
                     setLoading(false);
                 });
+
+            // // Fetch categories
+            // await axios.get(`http://localhost:5000/api/excursion/categories`)
+            //     .then((result) => {
+            //         console.log("Categories result.data: ", result.data);
+            //         if (Array.isArray(result.data)) {
+
+            //         } else {
+            //             console.error("Categories API response is not an array:", result.data);
+            //         }
+            //     })
+            //     .catch((error) => {
+            //         console.error("Categories API error:", error);
+            // }).finally(() => {
+            //     setLoading(false);
+            // });
         };
         fetchData();
     }, [statusChange]);

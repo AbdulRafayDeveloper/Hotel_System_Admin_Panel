@@ -6,7 +6,8 @@ import { FaUsers } from 'react-icons/fa';
 function Sidebar({ overview, applications, hotelTypes, hotelBar, hotelInfrastructure, hotelNutrition,
     hotelService, hotelTransferServices, employees, roles, accessibleEnvironments, beautyAndHealth,
     childrenFacilities, conferenceFacilities, entertainmentAndSports, hotel_transport,
-    roomAmenities, seaAndBeach, staff, excursion, excursionKeyPoints, excursionCategories }) {
+    roomAmenities, seaAndBeach, staff, excursion, excursionKeyPoints, excursionCategories,
+    icons }) {
     return (
         <div className='my-1'>
             <nav className="bg-white text-black w-full lg:w-full md:w-full h-screen p-6 rounded-lg shadow-lg overflow-y-auto">
@@ -103,6 +104,10 @@ function Sidebar({ overview, applications, hotelTypes, hotelBar, hotelInfrastruc
                     <li className="flex items-center space-x-3">
                         <FaUsers className="text-red-500" size={20} />
                         <Link href={excursionCategories} className="hover:text-blue-500 text-lg font-light">Excursion Categories</Link>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                        <FaUsers className="text-yellow-400" size={20} />
+                        <Link href={icons} className="hover:text-blue-500 text-lg font-light">Icons</Link>
                     </li>
                 </ul>
             </nav>
