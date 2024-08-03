@@ -8,6 +8,10 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LinkingWithSidebar from '../../components/LinkingWithSidebar';
 import { decodeJWT } from "../../components/DecodeJWT";
+import $ from 'jquery'; // Import jQuery
+import 'select2/dist/css/select2.min.css';
+import 'select2';
+
 
 function Page() {
     const router = useRouter();
@@ -41,18 +45,17 @@ function Page() {
         priceFor:{ adult: 0, child: 0, retired: 0, student: 0 },
         excursionType: "",
         keyPoints: [],
-        consider: [""],
+        consider: [],
         program: [{ description: "", duration: 0 }],
-        start: [0],
+        start: [],
         categories: [],
         goodPlaces: [{ "title": "", "description": "" }],
         goodPlaceThumbs: [],
         priceDetail: {
-            include: [""],
-            uninclude: [""]
+            include: [],
+            uninclude: []
         }
     });
-
     useEffect(() => {
         const decodedData = decodeJWT();
         if (!(decodedData && decodedData.token && (decodedData.role === "admin" || decodedData.role === "employee"))) {
@@ -123,10 +126,159 @@ function Page() {
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
+
+        let isValid = true
+        if (!formData.title || formData.title === "") {
+            isValid = false;
+            errors.title = "Fill in the title";
+        } else {
+            errors.title = "";
+        }
+    
+        if (!formData.address?.country || formData.address.country === "") {
+            isValid = false;
+            errors.country = "Fill in the country";
+        } else {
+            errors.country = "";
+        }
+    
+       /*if (!formData.address?.region || formData.address.region() === "") {
+            isValid = false;
+            errors['address.region'] = "Fill in the region";
+        } else {
+            errors['address.region'] = "";
+        }
+    
+        if (!formData.address?.city || formData.address.city() === "") {
+            isValid = false;
+            errors['address.city'] = "Fill in the city";
+        } else {
+            errors['address.city'] = "";
+        }
+    
+        if (!formData.address?.street || formData.address.street() === "") {
+            isValid = false;
+            errors['address.street'] = "Fill in the street";
+        } else {
+            errors['address.street'] = "";
+        }
+    
+        if (!formData.address?.house || formData.address.house() === "") {
+            isValid = false;
+            errors['address.house'] = "Fill in the house";
+        } else {
+            errors['address.house'] = "";
+        }
+    
+        if (!formData.address?.building || formData.address.building() === "") {
+            isValid = false;
+            errors['address.building'] = "Fill in the building";
+        } else {
+            errors['address.building'] = "";
+        }
+    */
+        if (!formData.departure || formData.departure === "") {
+            isValid = false;
+            newErrors.departure = "Fill in the departure";
+        } else {
+            errors.departure = "";
+        }
+    
+        if (!formData.arrival || formData.arrival === "") {
+            isValid = false;
+            errors.arrival = "Fill in the arrival";
+        } else {
+            errors.arrival = "";
+        }
+    
+        if (!formData.description || formData.description === "") {
+            isValid = false;
+            errors.description = "Fill in the description";
+        } else {
+            errors.description = "";
+        }
+    /*
+        if (!formData.howToWork || formData.howToWork() === "") {
+            isValid = false;
+            errors.howToWork = "Fill in the how to work";
+        } else {
+            errors.howToWork = "";
+        }
+    
+        if (!formData.typeOfVisit?.typeOf || formData.typeOfVisit.typeOf() === "") {
+            isValid = false;
+            errors['typeOfVisit.typeOf'] = "Fill in the type of visit";
+        } else {
+            errors['typeOfVisit.typeOf'] = "";
+        }
+    
+        if (!formData.typeOfVisit?.maxPeople || formData.typeOfVisit.maxPeople <= 0) {
+            isValid = false;
+            errors['typeOfVisit.maxPeople'] = "Fill in a valid number for max people";
+        } else {
+            errors['typeOfVisit.maxPeople'] = "";
+        }
+    */
+        if (!formData.duration || formData.duration <= 0) {
+            isValid = false;
+            errors.duration = "Fill in a valid duration";
+        } else {
+            errors.duration = "";
+        }
+    
+        if (!formData.ticketPrice || formData.ticketPrice <= 0) {
+            isValid = false;
+            errors.ticketPrice = "Fill in a valid ticket price";
+        } else {
+            errors.ticketPrice = "";
+        }
+    
+        if (!formData.excursionType || formData.excursionType === "") {
+            isValid = false;
+            errors.excursion = "Fill in the excursion type";
+        } else {
+            errors.excursion = "";
+        }
+    
+        if (!formData.keyPoints || formData.keyPoints === "") {
+            isValid = false;
+            errors.keyPoints = "Fill in the key points";
+        } else {
+            errors.keyPoints = "";
+            newErrors.keyPoints = "";
+        }
+    
+        if (!formData.categories || formData.categories.length === 0) {
+            isValid = false;
+            errors.categories = "Select at least one category";
+        } else {
+            errors.categories = "";
+        }
+    
+        if (!formData.goodPlaces?.title ) {
+            isValid = false;
+            errors.goodtitle = "Add at least one good place";
+        } else {
+            errors.goodPlaces = "";
+        }
+
+        if (!formData.goodPlaces?.description ) {
+            isValid = false;
+            errors.gooddesrip = "Add at least one good place";
+        } else {
+            errors.goodPlaces = "";
+        }
+    
+        if (!formData.goodPlaceThumbs || formData.goodPlaceThumbs.length === 0) {
+            isValid = false;
+            errors.goodPlaceThumbs = "Upload at least one thumbnail for good places";
+        } else {
+            errors.goodPlaceThumbs = "";
+        }
     };
 
     // Update a specific item in the include or uninclude arrays
-    const handlePriceDetailChange = (arrayName, arrayIndex, value) => {
+   /* const handlePriceDetailChange = (arrayName, arrayIndex, value) => {
         setFormData(prev => ({
             ...prev,
             priceDetail: {
@@ -148,7 +300,7 @@ function Page() {
             }
         }));
     };
-
+*/
     const handlePriceForChange = (e) => {
         const { name, value } = e.target;
     
@@ -165,16 +317,25 @@ function Page() {
     
     const handleCategoryChange = (e) => {
         const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    
         setFormData(prev => {
-            const updatedCategories = [
-                ...new Set([
-                    ...prev.categories,
-                    ...selectedOptions
-                ])
-            ];
+            
+            const categoriesSet = new Set(prev.categories);
+            const updatedCategories = selectedOptions.reduce((acc, option) => {
+                if (categoriesSet.has(option)) {
+                    categoriesSet.delete(option);
+                } else {
+                    
+                    categoriesSet.add(option);
+                }
+                return Array.from(categoriesSet);
+            }, [...prev.categories]);
+    
             return { ...prev, categories: updatedCategories };
         });
     };
+    
+    
 
     const handleTicketOfVisitChange = (event) => {
         const { name, value } = event.target;
@@ -223,18 +384,19 @@ function Page() {
             label: option.label,
             color: option.dataset.color
         }));
+    
+        setFormData(prev => {
 
-        const existingkeyPoints = formData.keyPoints;
-        const updatedkeyPoints = [...existingkeyPoints, ...selectedOptions]
-            .filter((value, index, self) =>
-                index === self.findIndex((t) => (
-                    t.label === value.label
-                ))
-            );
+            const existingLabels = new Set(prev.keyPoints.map(kp => kp.label));
+            const selectedLabels = new Set(selectedOptions.map(kp => kp.label));
 
-        setFormData(prev => ({ ...prev, keyPoints: updatedkeyPoints }));
+            const updatedKeyPoints = prev.keyPoints.filter(kp => !selectedLabels.has(kp.label)) 
+                .concat(selectedOptions.filter(option => !existingLabels.has(option.label)));
+    
+            return { ...prev, keyPoints: updatedKeyPoints };
+        });
     };
-
+    
     const handleProgramChange = (index, event) => {
         const { name, value } = event.target;
         const newProgram = [...formData.program];
@@ -252,135 +414,146 @@ function Page() {
         setFormData(prev => ({ ...prev, program: newProgram }));
     };
 
-    // Prepare data for submission
-    // const formDataToSend = new FormData();
-    // formDataToSend.append('title', formData.title);
-    // formDataToSend.append('address', (formData.address));
-    // formDataToSend.append('thumbs', formData.thumbs);
-    // formDataToSend.append('departure', formData.departure);
-    // formDataToSend.append('arrival', formData.arrival);
-    // formDataToSend.append('description', formData.description);
-    // formDataToSend.append('howToWork', formData.howToWork);
-    // formDataToSend.append('typeOfVisit', (formData.typeOfVisit));
-    // formDataToSend.append('duration', formData.duration);
-    // formDataToSend.append('withGuider', formData.withGuider);
-    // formDataToSend.append('withBus', formData.withBus);
-    // formDataToSend.append('ticketPrice', formData.ticketPrice);
-    // formDataToSend.append('priceFor', (formData.priceFor));
-    // formDataToSend.append('excursionType', formData.excursionType);
-    // formDataToSend.append('keyPoints', (formData.keyPoints));
-    // formDataToSend.append('consider', (formData.consider));
-    // formDataToSend.append('program', (formData.program));
-    // formDataToSend.append('start', (formData.start));
-    // formDataToSend.append('categories', (formData.categories));
+    const removeGoodPlace = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            goodPlaces: prev.goodPlaces.filter((_, i) => i !== index),
+        }));
+    };
+    
+     
+     const handlePriceDetailChange = (type, index, value) => {
+        const updatedArray = [...formData.priceDetail[type]];
+        updatedArray[index] = value;
+        setFormData({
+            ...formData,
+            priceDetail: {
+                ...formData.priceDetail,
+                [type]: updatedArray
+            }
+        });
+    };
 
-    /*formData.goodPlaces.forEach((place, index) => {
-        formDataToSend.append(`goodPlaces[${index}][title]`, place.title);
-        formDataToSend.append(`goodPlaces[${index}][description]`, place.description);
-        if (formData.goodPlaceThumbs[index]) {
-            formDataToSend.append(`goodPlaceThumbs[${index}]`, formData.goodPlaceThumbs[index]);
-        }
-    });*/
+    const addPriceDetail = () => {
+        setFormData({
+            ...formData,
+            priceDetail: {
+                include: [...formData.priceDetail.include, ""],
+                uninclude: [...formData.priceDetail.uninclude, ""]
+            }
+        });
+    };
 
-    // formDataToSend.append('priceDetail', (formData.priceDetail));
-    // console.log('Form title:', formData.title)
-    // console.log('FormData: ', formDataToSend.title)
-    // console.log("data thumbs", formData.thumbs)
-    // console.log("data thumbs", formData.goodPlaceThumbs)
-    // Send POST request
+    const removePriceDetail = (index) => {
+        const updatedInclude = formData.priceDetail.include.filter((_, i) => i !== index);
+        const updatedUninclude = formData.priceDetail.uninclude.filter((_, i) => i !== index);
 
-    // let errorMessage = "";
-
-    // Validate required fields and default values
-    /* if (!formData.title || !formData.address.country || !formData.address.region || !formData.address.city ||
-         !formData.address.street || !formData.address.house || !formData.address.building ||
-         formData.duration === "" || formData.withGuider === undefined || formData.withBus === undefined ||
-         formData.ticketPrice === null || formData.excursionType === "" ||
-         formData.keyPoints.length === 0 || formData.consider.length === 0 ||
-         formData.start.length === 0 || formData.priceFor.length === 0 || formData.program.length === 0  || formData.priceDetail.include.length === 0 || 
-         formData.priceDetail.uninclude.length === 0) {
-         
-         isValid = false;
-         errorMessage = "Please fill in all required fields.";
-     }*/
-
-    //formData.goodPlaces.length === 0
-
-    // Validate goodPlaces and goodPlaceThumbs
-    /* formData.goodPlaces.forEach((place, index) => {
-         if (!place.title || !place.description || !formData.goodPlaceThumbs[index]) {
-             isValid = false;
-             errorMessage = "Each good place must have a title, description, and thumbnail.";
-         }
-     });
- 
-     // Validate priceDetail include and uninclude
-     formData.priceDetail.include.forEach((include) => {
-         if (include && formData.priceDetail.uninclude.length === 0) {
-             isValid = false;
-             errorMessage = "If any include is added in price details, there must be at least one uninclude.";
-         }
-     });
- */
+        setFormData({
+            ...formData,
+            priceDetail: {
+                include: updatedInclude,
+                uninclude: updatedUninclude
+            }
+        });
+    };
+    
+    const [errors, setErrors] = useState({
+        title: '',
+        country: "",
+        region: "",
+        city: "",
+        street: "",
+        house: "",
+        building: "",
+        departure: "",
+        arrival: "",
+        description: "",
+        howToWork: "",
+        typeOf: "",
+        maxPeople: "",
+        duration: "",
+        ticketPrice: "",
+        excursion: "",
+        keyPoints: "",
+        categories: "",
+        goodtitle: "",
+        gooddesrip: "",
+        goodPlaceThumbs:"",
+        building: "",
+        city: "",
+        country:"",
+        description: "",
+        house: "",
+        maxPeople: "",
+        region: "",
+        street: "",
+        typeOf:"",
+    });
+    let [newErrors, setnew]= useState({...errors})
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         let isValid = true;
-
-        let errorMessage = '';
-
+        
+        handleChange(e)
         // Define required fields and nested fields
         const requiredFields = [
             'title',
-            'address.country',
-            'address.region',
-            'address.city',
-            'address.street',
-            'address.house',
-            'address.building',
+            'country',
+            'thumbnails',
             'departure',
             'arrival',
             'description',
-            'howToWork',
-            'typeOfVisit.typeOf',
-            'typeOfVisit.maxPeople',
             'duration',
             'ticketPrice',
-            'excursionType',
+            "goodtitle",
+            "gooddesrip",
+            "goodPlaceThumbs",
+            'exrusion',
             'keyPoints',
-            'categories',
-            'goodPlaces',
-            'priceDetail.include',
-            'priceDetail.uninclude',
-            'goodPlaceThumbs'
+            'categories'
         ];
-
+    
         // Check required fields
         requiredFields.forEach((field) => {
             const fieldParts = field.split('.');
+            //console.log('fieldParts: ',fieldParts)
             let value = formData;
-
+            //console.log('value = formData: ',value)
             fieldParts.forEach(part => {
                 value = value && value[part];
+               // console.log('value: ',value)
             });
 
-            if (value === undefined || value === null || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && !Object.keys(value).length)) {
+            console.log('value2:', value)
+    
+            if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && !Object.keys(value).length)) {
                 isValid = false;
-                errorMessage = 'Please fill out all required fields.';
+                newErrors[field] = 'This field is required.';
+                console.log('field: ',field)
+            } else {
+                newErrors[field] = ''; // Clear the error if valid
             }
         });
-
+    
         // Check numeric fields
         const numericFields = ['duration', 'ticketPrice'];
         numericFields.forEach((field) => {
             const value = formData[field];
             if (isNaN(value) || value <= 0) {
                 isValid = false;
-                errorMessage = 'Please enter valid numbers for duration and ticket price.';
+                newErrors[field] = 'Please enter a valid number greater than zero.';
+            } else {
+                newErrors[field] = ''; // Clear the error if valid
             }
         });
-
-        
+    
+        console.log(newErrors)
+        console.log(errors.categories)
+        console.log(errors.duration)
+        // Set errors state
+        setErrors(newErrors);
+            
         if (isValid) {
             try {
                 setLoading(true);
@@ -436,7 +609,12 @@ function Page() {
                 setLoading(false);
             }
         } else {
-            Swal.fire('Error!', errorMessage, 'error');
+            console.log(errors.title)
+            console.log(errors.keyPoints)
+            console.log(newErrors.title)
+            console.log(errors.country)
+          //  console.log(newErrors.address.country)
+            Swal.fire('Error!', 'PLease resolve all the errors', 'error');
         }
     };
 
@@ -453,7 +631,8 @@ function Page() {
                                 <h1 className='text-2xl font-medium text-center pb-7 text-gray-800 pt-4'>Add Excursions</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="title">Title</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-[13.9px]" htmlFor="title">Title</label>
+                                        
                                         <input
                                             type="text"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -463,108 +642,111 @@ function Page() {
                                             placeholder="Enter title"
                                             value={formData.title}
                                         />
+                                        {newErrors.title && <p className="text-red-700 text-sm">{newErrors.title}</p>}
+                                        
                                     </div>
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-country">Country</label>
-                                        <select
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-country"
-                                            id="address-country"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, country: e.target.value }
-                                            }))}
-                                            value={formData.address.country}
-                                        >
-                                            <option value="">Select Country</option>
-                                            <option value="Russia">Russia</option>
-                                            <option value="Abkhazia">Abkhazia</option>
-                                        </select>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-region">Region</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-region"
-                                            id="address-region"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, region: e.target.value }
-                                            }))}
-                                            placeholder="Enter region"
-                                            value={formData.address.region}
-                                        />
+                                    <div className="flex flex-col space-y-4">
+                                        <h2 className="text-medium font-medium text-gray-800 ">Address Information</h2>
+                                        <div className="flex flex-col">
+                                            <select
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                name="address-country"
+                                                id="address-country"
+                                                onChange={(e) => setFormData(prev => ({
+                                                    ...prev,
+                                                    address: { ...prev.address, country: e.target.value }
+                                                }))}
+                                                value={formData.address.country}
+                                            >
+                                                <option value="">Select Country</option>
+                                                <option value="Russia">Russia</option>
+                                                <option value="Abkhazia">Abkhazia</option>
+                                            </select>
+                                            
+                                            {errors.country && <p className="text-red-700 text-sm">{errors.country}</p>}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            
+                                            <input
+                                                type="text"
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                name="address-region"
+                                                id="address-region"
+                                                onChange={(e) => setFormData(prev => ({
+                                                    ...prev,
+                                                    address: { ...prev.address, region: e.target.value }
+                                                }))}
+                                                placeholder="Enter region"
+                                                value={formData.address.region}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            
+                                            <input
+                                                type="text"
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                name="address-city"
+                                                id="address-city"
+                                                onChange={(e) => setFormData(prev => ({
+                                                    ...prev,
+                                                    address: { ...prev.address, city: e.target.value }
+                                                }))}
+                                                placeholder="Enter city"
+                                                value={formData.address.city}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                           
+                                            <input
+                                                type="text"
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                name="address-street"
+                                                id="address-street"
+                                                onChange={(e) => setFormData(prev => ({
+                                                    ...prev,
+                                                    address: { ...prev.address, street: e.target.value }
+                                                }))}
+                                                placeholder="Enter street"
+                                                value={formData.address.street}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            
+                                            <input
+                                                type="text"
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                name="address-house"
+                                                id="address-house"
+                                                onChange={(e) => setFormData(prev => ({
+                                                    ...prev,
+                                                    address: { ...prev.address, house: e.target.value }
+                                                }))}
+                                                placeholder="Enter house"
+                                                value={formData.address.house}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            
+                                            <input
+                                                type="text"
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                name="address-building"
+                                                id="address-building"
+                                                onChange={(e) => setFormData(prev => ({
+                                                    ...prev,
+                                                    address: { ...prev.address, building: e.target.value }
+                                                }))}
+                                                placeholder="Enter building"
+                                                value={formData.address.building}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-city">City</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-city"
-                                            id="address-city"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, city: e.target.value }
-                                            }))}
-                                            placeholder="Enter city"
-                                            value={formData.address.city}
-                                        />
-                                    </div>
-
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-street">Street</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-street"
-                                            id="address-street"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, street: e.target.value }
-                                            }))}
-                                            placeholder="Enter street"
-                                            value={formData.address.street}
-                                        />
-                                    </div>
-
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-house">House</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-house"
-                                            id="address-house"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, house: e.target.value }
-                                            }))}
-                                            placeholder="Enter house"
-                                            value={formData.address.house}
-                                        />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="address-building">Building</label>
-                                        <input
-                                            type="text"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            name="address-building"
-                                            id="address-building"
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                address: { ...prev.address, building: e.target.value }
-                                            }))}
-                                            placeholder="Enter building"
-                                            value={formData.address.building}
-                                        />
-                                    </div>
                                     <div className="flex flex-col mb-4">
                                         <h2 className="text-md font-semibold mb-2 text-gray-800">Add Good Place</h2>
                                         {formData.goodPlaces.map((place, index) => (
-                                            <div key={index} className="flex flex-col mb-4">
+                                            <div key={index} className="flex flex-col mb-4  p-4 ">
                                                 <div className="flex flex-col mb-2">
-                                                    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor={`title-${index}`}>Title</label>
                                                     <input
                                                         type="text"
                                                         name="title"
@@ -574,9 +756,9 @@ function Page() {
                                                         onChange={(e) => handleGoodPlaceChange(index, e)}
                                                         placeholder="Enter title"
                                                     />
+                                                    {errors.goodtitle && <p className="text-red-700 text-sm">{errors.goodtitle}</p>}
                                                 </div>
                                                 <div className="flex flex-col mb-2">
-                                                    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor={`description-${index}`}>Description</label>
                                                     <textarea
                                                         name="description"
                                                         id={`description-${index}`}
@@ -585,9 +767,10 @@ function Page() {
                                                         onChange={(e) => handleGoodPlaceChange(index, e)}
                                                         placeholder="Enter description"
                                                     />
+                                                    {errors.gooddesrip && <p className="text-red-700 text-sm">{errors.gooddesrip}</p>}
                                                 </div>
                                                 <div className="flex flex-col mb-2">
-                                                    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor={`thumb-${index}`}>Thumbnail</label>
+                                                    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor={`thumb-${index}`}>Good Place Thumbnail</label>
                                                     <input
                                                         type="file"
                                                         name="thumb"
@@ -595,7 +778,15 @@ function Page() {
                                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                                         onChange={(e) => handleThumbChange(index, e)}
                                                     />
+                                                    {errors.goodPlaceThumbs && <p className="text-red-700 text-sm">{errors.goodPlaceThumbs}</p>}
                                                 </div>
+                                                <button
+                                                    type="button"
+                                                    className="bg-red-500 text-white px-4 py-2 rounded shadow mt-2"
+                                                    onClick={() => removeGoodPlace(index)}
+                                                >
+                                                    Remove Good Place
+                                                </button>
                                             </div>
                                         ))}
                                         <button
@@ -605,16 +796,18 @@ function Page() {
                                             Add Another Good Place
                                         </button>
                                     </div>
+
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="thumbs">Thumbnails</label>
                                         <input
                                             type="file"
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            className="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             name="thumbs"
                                             id="thumbs"
                                             onChange={handleThumbfileChange}
                                             multiple
                                         />
+                                        {errors.description && <p className="text-red-700 text-sm">{errors.description}</p>}
                                         <div className="mt-4">
                                             {formData.thumbs.length > 0 && (
                                                 <ul className="list-disc pl-5">
@@ -626,11 +819,12 @@ function Page() {
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col mb-4">
+                                    {/*<div className="flex flex-col mb-4">
                                         <h2 className="text-md font-semibold mb-2 text-gray-800">Add Price Details</h2>
 
+                                        <div>
                                         <div className="flex flex-col mb-2">
-                                            <label className="block text-gray-700 text-base font-semibold mb-2">Include</label>
+                                            
                                             {formData.priceDetail.include.map((include, i) => (
                                                 <div key={i} className="flex items-center mb-2">
                                                     <input
@@ -645,7 +839,7 @@ function Page() {
                                         </div>
 
                                         <div className="flex flex-col mb-2">
-                                            <label className="block text-gray-700 text-base font-semibold mb-2">Uninclude</label>
+                                            
                                             {formData.priceDetail.uninclude.map((uninclude, i) => (
                                                 <div key={i} className="flex items-center mb-2">
                                                     <input
@@ -656,6 +850,59 @@ function Page() {
                                                     />
                                                 </div>
                                             ))}
+                                            
+                                        </div>
+                                        
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="bg-green-500 text-white px-4 py-2 rounded shadow mt-4"
+                                            onClick={addPriceDetail}
+                                        >
+                                            Add Detail Entry
+                                        </button>
+                                    </div>*/}
+
+                                     <div className="flex flex-col mb-4">
+                                        <h2 className="text-md font-semibold mb-2 text-gray-800">Add Price Details</h2>
+                                            <div>
+                                                <div className="flex flex-col mb-2">
+                                                    {formData.priceDetail.include.map((include, i) => (
+                                                        <div key={i} className="flex items-center mb-2">
+                                                            <input
+                                                                type="text"
+                                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                                value={include}
+                                                                onChange={(e) => handlePriceDetailChange("include", i, e.target.value)}
+                                                                placeholder="Enter Include"
+                                                            />
+                                                            
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                <div className="flex flex-col mb-2">
+                                                    <div className="flex flex-col mb-2">
+                                                    {formData.priceDetail.uninclude.map((uninclude, i) => (
+                                                        <div key={i} className="flex items-center mb-2">
+                                                            <input
+                                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                                value={uninclude}
+                                                                onChange={(e) => handlePriceDetailChange("uninclude", i, e.target.value)}
+                                                                placeholder="Enter Uninclude"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                className="ml-4 bg-red-500 text-white px-2 py-1 rounded shadow"
+                                                                onClick={() => removePriceDetail(i)}
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                            </div>
                                         </div>
 
                                         <button
@@ -667,6 +914,7 @@ function Page() {
                                         </button>
                                     </div>
 
+
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="categories">Categories</label>
                                         <select
@@ -677,12 +925,14 @@ function Page() {
                                             onChange={handleCategoryChange}
                                             value={formData.categories}
                                         >
+                                            
                                             {categoriesOptions.map(category => (
                                                 <option key={category} value={category}>
                                                     {category}
                                                 </option>
                                             ))}
                                         </select>
+                                        {errors.categories && <p className="text-red-700 text-sm">{errors.categories}</p>}
 
                                         <div className="mt-4">
                                             <h2 className="text-lg font-semibold text-gray-800">Selected Categories:</h2>
@@ -699,7 +949,6 @@ function Page() {
                                             </ul>
                                         </div>
                                     </div>
-
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="departure">Departure</label>
                                         <input
@@ -711,6 +960,7 @@ function Page() {
                                             placeholder="Enter departure time"
                                             value={formData.departure}
                                         />
+                                        {errors.departure && <p className="text-red-700 text-sm">{errors.departure}</p>}
                                     </div>
 
                                     <div className="flex flex-col">
@@ -724,6 +974,7 @@ function Page() {
                                             placeholder="Enter arrival time"
                                             value={formData.arrival}
                                         />
+                                        {errors.arrival && <p className="text-red-700 text-sm">{errors.arrival}</p>}
                                     </div>
 
                                     <div className="flex flex-col col-span-2">
@@ -751,10 +1002,10 @@ function Page() {
                                     </div>
 
                                     <div className="flex flex-col mb-4">
-                                        <h2 className="text-md font-semibold mb-2 text-gray-800">Ticket Of Visit</h2>
+                                        <h2 className="text-md font-semibold mb-2 text-gray-800">Type Of Visit</h2>
 
                                         <div className="flex flex-col mb-2">
-                                            <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketTypeOf">Type Of</label>
+                                            
                                             <input
                                                 type="text"
                                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -767,7 +1018,7 @@ function Page() {
                                         </div>
 
                                         <div className="flex flex-col mb-2">
-                                            <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketMaxPeople">Max People</label>
+                                            <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="ticketMaxPeople">Max People</label>
                                             <input
                                                 type="number"
                                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -791,6 +1042,7 @@ function Page() {
                                             placeholder="Enter duration"
                                             value={formData.duration}
                                         />
+                                        {newErrors.duration && <p className="text-red-700 text-sm">{newErrors.duration}</p>}
                                     </div>
 
                                     <div className="flex flex-col">
@@ -817,8 +1069,9 @@ function Page() {
                                         />
                                     </div>
 
+                                    <lab className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketPrice">Ticket Price</lab>
                                     <div className="flex flex-col col-span-2">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketPrice">Ticket Price</label>
+                                        
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -828,56 +1081,57 @@ function Page() {
                                             placeholder="Enter ticket price"
                                             value={formData.ticketPrice}
                                         />
+                                        {errors.ticketPrice && <p className="text-red-700 text-sm">{errors.ticketPrice}</p>}
                                     </div>
 
                                     <div className="flex flex-col">
-    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="adultPrice">Adult Price</label>
-    <input
-        type="number"
-        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        name="adult"
-        id="adultPrice"
-        onChange={handlePriceForChange}
-        value={formData.priceFor.adult || ''}
-        placeholder="Enter price for adults"
-    />
-</div>
-<div className="flex flex-col">
-    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="childPrice">Child Price</label>
-    <input
-        type="number"
-        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        name="child"
-        id="childPrice"
-        onChange={handlePriceForChange}
-        value={formData.priceFor.child || ''}
-        placeholder="Enter price for children"
-    />
-</div>
-<div className="flex flex-col">
-    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="retiredPrice">Retired Price</label>
-    <input
-        type="number"
-        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        name="retired"
-        id="retiredPrice"
-        onChange={handlePriceForChange}
-        value={formData.priceFor.retired || ''}
-        placeholder="Enter price for retired"
-    />
-</div>
-<div className="flex flex-col">
-    <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="studentPrice">Student Price</label>
-    <input
-        type="number"
-        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        name="student"
-        id="studentPrice"
-        onChange={handlePriceForChange}
-        value={formData.priceFor.student || ''}
-        placeholder="Enter price for students"
-    />
-</div>
+                                        
+                                        <input
+                                            type="number"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="adult"
+                                            id="adultPrice"
+                                            onChange={handlePriceForChange}
+                                            value={formData.priceFor.adult || ''}
+                                            placeholder="Enter price for adults"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        
+                                        <input
+                                            type="number"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="child"
+                                            id="childPrice"
+                                            onChange={handlePriceForChange}
+                                            value={formData.priceFor.child || ''}
+                                            placeholder="Enter price for children"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        
+                                        <input
+                                            type="number"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="retired"
+                                            id="retiredPrice"
+                                            onChange={handlePriceForChange}
+                                            value={formData.priceFor.retired || ''}
+                                            placeholder="Enter price for retired"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        
+                                        <input
+                                            type="number"
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            name="student"
+                                            id="studentPrice"
+                                            onChange={handlePriceForChange}
+                                            value={formData.priceFor.student || ''}
+                                            placeholder="Enter price for students"
+                                        />
+                                    </div>
 
                                     {/* Extra fields */}
 
@@ -892,6 +1146,7 @@ function Page() {
                                             placeholder="Enter excursion type"
                                             value={formData.excursionType}
                                         />
+                                        {errors.excursion && <p className="text-red-700 text-sm">{errors.excursion}</p>}
                                     </div>
                                     <div className="flex flex-col col-span-2">
                                         <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="keyPoints">keyPoints</label>
@@ -902,6 +1157,7 @@ function Page() {
                                             onChange={handlekeyPointsChange}
                                             value={formData.keyPoints.map(kp => kp.label)}
                                         >
+                                            
                                             {keyPointsOptions.map((option, index) => (
                                                 <option
                                                     key={index}
@@ -913,6 +1169,7 @@ function Page() {
 
                                             ))}
                                         </select>
+                                        {errors.keyPoints && <p className="text-red-700 text-sm">{errors.keyPoints}</p>}
                                     </div>
                                     <div className="flex flex-col col-span-2 mt-4">
                                         <label className="block text-gray-700 text-base font-semibold mb-2">Selected keyPoints</label>
