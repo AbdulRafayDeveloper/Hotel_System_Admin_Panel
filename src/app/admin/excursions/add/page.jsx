@@ -83,6 +83,7 @@ function Page() {
 
         fetchkeyPoints();
         fetchCategory();
+        console.log(formData.consider)
     }, [router]);
 
     const handleThumbfileChange = (event) => {
@@ -244,11 +245,18 @@ function Page() {
             errors.gooddesrip = "";
         }
 
-        if (!formData.goodPlaceThumbs || formData.goodPlaceThumbs.length === 0) {
+        if (formData.goodPlaces.length !== formData.goodPlaceThumbs.length) {
+            errors['goodPlaceThumbs'] = 'Please upload a thumbnail for each good place.';
             isValid = false;
-            errors['goodPlaceThumbs'] = '';
-        } else {
-            errors['goodPlaceThumbs'] = ''; // Clear the error if valid
+        }
+
+        // Ensure no thumbnail is missing
+        for (let i = 0; i < formData.goodPlaceThumbs.length; i++) {
+            if (!formData.goodPlaceThumbs[i]) {
+                errors['goodPlaceThumbs'] = 'Please upload a thumbnail for each good place.';
+                isValid = false;
+                break;
+            }
         }
 
         if (!formData.keyPoints || formData.keyPoints.length === 0) {
@@ -322,9 +330,9 @@ function Page() {
     };
 
     const handleConsiderChange = (index, event) => {
-        const newConsider = [...formData.start];
-        newConsider[index] = event.target.value;
-        setFormData(prev => ({ ...prev, consider: newConsider }));
+        const newconsider = [...formData.consider];
+        newconsider[index] = event.target.value;
+        setFormData(prev => ({ ...prev, consider: newconsider }));
     };
 
     const addConsider = () => {
@@ -566,6 +574,20 @@ function Page() {
             }
         });
 
+        if (formData.goodPlaces.length !== formData.goodPlaceThumbs.length) {
+            errors['goodPlaceThumbs'] = 'Please upload a thumbnail for each good place.';
+            isValid = false;
+        }
+
+        // Ensure no thumbnail is missing
+        for (let i = 0; i < formData.goodPlaceThumbs.length; i++) {
+            if (!formData.goodPlaceThumbs[i]) {
+                newErrors['goodPlaceThumbs'] = 'Please upload a thumbnail for each good place.';
+                isValid = false;
+                break;
+            }
+        }
+
         // Set errors state
         setErrors(newErrors);
 
@@ -774,7 +796,7 @@ function Page() {
                                                         onChange={(e) => handleGoodPlaceChange(index, e)}
                                                         placeholder="Enter title"
                                                     />
-                                                    {newErrors['goodPlaces[0].title'] && <p className="text-red-700 text-sm">{newErrors['goodPlaces[0].title']}</p>}
+                                                    {newErrors[ `goodPlaces[${index}].title` ] && <p className="text-red-700 text-sm">{newErrors[ `goodPlaces[${index}].title` ]}</p>}
                                                 </div>
                                                 <div className="flex flex-col mb-2">
                                                     <textarea
@@ -785,7 +807,7 @@ function Page() {
                                                         onChange={(e) => handleGoodPlaceChange(index, e)}
                                                         placeholder="Enter description"
                                                     />
-                                                    {newErrors['goodPlaces[0].description'] && <p className="text-red-700 text-sm">{newErrors['goodPlaces[0].description']}</p>}
+                                                    {newErrors[`goodPlaces[${index}].description`] && <p className="text-red-700 text-sm">{newErrors[`goodPlaces[${index}].description`]}</p>}
                                                 </div>
                                                 <div className="flex flex-col mb-2">
                                                     <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor={`thumb-${index}`}>Good Place Thumbnail</label>
