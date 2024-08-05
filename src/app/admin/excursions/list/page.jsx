@@ -5,7 +5,7 @@ import Link from 'next/link';
 import ReactPaginate from 'react-paginate';
 import axios from "axios"
 import Swal from 'sweetalert2';
-import { FaPlus, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaPlus, FaChevronLeft, FaChevronRight, FaEdit } from 'react-icons/fa';
 import Loading from './loading';
 import LinkingWithSidebar from '../../components/LinkingWithSidebar';
 import Header from '../../components/Header'
@@ -150,7 +150,10 @@ function Page() {
                                                 <td className="text-center border border-gray-300 text-gray-900 p-1">{element.title}</td>
                                                 <td className="text-center border border-gray-300 text-gray-900 p-1">{element.description}</td>
                                                 <td className="text-center border border-gray-300 p-1">
-                                                    <div className='flex flex-row space-x-3 justify-center'>
+                                                    <div className='flex space-x-3 justify-center'>
+                                                        <Link href={`../../../admin/excursions/update/${element._id}`}>
+                                                            <FaEdit className="text-green-500 hover:text-green-800 cursor-pointer" />
+                                                        </Link>
                                                         <button onClick={() => handleDelete(element._id)} className="text-red-600 hover:text-red-800">
                                                             <FaTrash />
                                                         </button>

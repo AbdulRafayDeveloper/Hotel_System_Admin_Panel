@@ -6,13 +6,14 @@ import axios from "axios";
 import { useRouter } from 'next/navigation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import LinkingWithSidebar from '../../components/LinkingWithSidebar';
-import { decodeJWT } from "../../components/DecodeJWT";
+import LinkingWithSidebar from '../../../components/secondLayer/LinkingWithSidebar';
+import { decodeJWT } from "../../../components/DecodeJWT";
 import 'select2/dist/css/select2.min.css';
 import 'select2';
 
-function Page() {
+function Page({ params }) {
     const router = useRouter();
+    const id = params.id;
     const [loading, setLoading] = useState(false);
     const [keyPointsOptions, setkeyPointsOptions] = useState([]);
     const [categoriesOptions, setCategory] = useState([]);
@@ -61,6 +62,52 @@ function Page() {
         }
 
         // Fetch keyPoints options from API
+        const fetchExcursionRecord = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/getExcursion/${id}`);
+                console.log("response.data.data: ", response.data.data);
+                if (response.data.status === 200) {
+                    const result = response.data.data;
+                    setFormData(prevFormData => ({
+                        ...prevFormData,
+                        // thumbs: result.thumbs || prevFormData.thumbs,
+                        title: result.title,
+                        address: result.address || prevFormData.address,
+                        goodPlaces: result.goodPlaces || prevFormData.goodPlaces,
+                        // goodPlaceThumbs: result.goodPlaceThumbs || prevFormData.goodPlaceThumbs,
+                        priceDetail: result.priceDetail || prevFormData.priceDetail,
+                        categories: result.categories || prevFormData.categories,
+                        departure: result.departure || prevFormData.departure,
+                        arrival: result.arrival || prevFormData.arrival,
+                        description: result.description || prevFormData.description,
+                        howToWork: result.howToWork || prevFormData.howToWork,
+                        typeOfVisit: result.typeOfVisit || prevFormData.typeOfVisit,
+                        duration: result.duration || prevFormData.duration,
+                        withGuider: result.withGuider !== undefined ? result.withGuider : prevFormData.withGuider,
+                        withBus: result.withBus !== undefined ? result.withBus : prevFormData.withBus,
+                        ticketPrice: result.ticketPrice || prevFormData.ticketPrice,
+                        priceFor: result.priceFor || prevFormData.priceFor,
+                        excursionType: result.excursionType || prevFormData.excursionType,
+                        keyPoints: result.keyPoints || prevFormData.keyPoints,
+                        consider: result.consider || prevFormData.consider,
+                        program: result.program || prevFormData.program,
+                        start: result.start || prevFormData.start,
+                    }));
+
+                    console.log("Duration: ", formData.duration);
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.data.message,
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching keyPoints:", error);
+            }
+        };
+
+        // Fetch keyPoints options from API
         const fetchkeyPoints = async () => {
             try {
                 const response = await axios.get("http://localhost:5000/api/excursions/keyPoints");
@@ -81,6 +128,7 @@ function Page() {
             }
         };
 
+        fetchExcursionRecord();
         fetchkeyPoints();
         fetchCategory();
     }, [router]);
@@ -185,7 +233,7 @@ function Page() {
             isValid = false;
             errors.description = 'Description must be at least 100 characters long.';
         } else {
-            errors.description = ''; // Clear the error if valid
+            errors.description = '';
         }
 
         if (!formData.duration || formData.duration <= 0) {
@@ -248,14 +296,14 @@ function Page() {
             isValid = false;
             errors['goodPlaceThumbs'] = '';
         } else {
-            errors['goodPlaceThumbs'] = ''; // Clear the error if valid
+            errors['goodPlaceThumbs'] = '';
         }
 
         if (!formData.keyPoints || formData.keyPoints.length === 0) {
             isValid = false;
             errors['keyPoints'] = 'Select Keypoints';
         } else {
-            errors['keyPoints'] = ''; // Clear the error if valid
+            errors['keyPoints'] = '';
         }
 
         return isValid
@@ -474,7 +522,6 @@ function Page() {
         const requiredFields = [
             'title',
             'departure',
-            //  'country',
             'arrival',
             'description',
             'duration',
@@ -562,11 +609,10 @@ function Page() {
                 isValid = false;
                 newErrors[field] = 'Please enter a valid number greater than zero.';
             } else {
-                newErrors[field] = ''; // Clear the error if valid
+                newErrors[field] = '';
             }
         });
 
-        // Set errors state
         setErrors(newErrors);
 
         if (isValid) {
@@ -578,7 +624,6 @@ function Page() {
                     submissionData.append('thumbs', file);
                 });
 
-                // submissionData.append('title', JSON.stringify(formData.title));
                 submissionData.append('title', formData.title);
                 submissionData.append('address', JSON.stringify(formData.address));
                 submissionData.append('goodPlaces', JSON.stringify(formData.goodPlaces));
@@ -609,7 +654,7 @@ function Page() {
                     console.log(key, value);
                 });
 
-                const response = await axios.post("http://localhost:5000/api/excursions", submissionData, {
+                const response = await axios.put(`http://localhost:5000/api/excursion/${id}`, submissionData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -621,7 +666,7 @@ function Page() {
                         title: "Success",
                         text: response.data.message,
                     }).then(() => {
-                        router.push("./../../admin/excursions/list");
+                        router.push("../../../admin/excursions/list");
                     });
                 } else {
                     Swal.fire({
@@ -637,7 +682,7 @@ function Page() {
                 setLoading(false);
             }
         } else {
-            Swal.fire('Error!', 'PLease resolve all the errors', 'error');
+            Swal.fire('Error!', 'PLease resolve all mentioned errors', 'error');
         }
     };
 
@@ -651,7 +696,7 @@ function Page() {
                     <div className='p-1'>
                         <div className='mx-auto max-w-[1000px] mt-12'>
                             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-12 pb-4 mb-4 py-2 mt-2" encType='multipart/form-data' method='post'>
-                                <h1 className='text-2xl font-medium text-center pb-7 text-gray-800 pt-4'>Add Excursions</h1>
+                                <h1 className='text-2xl font-medium text-center pb-7 text-gray-800 pt-4'>Update Excursion</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div className="flex flex-col">
                                         <label className="block text-gray-700 text-base font-semibold mb-[13.9px]" htmlFor="title">Title <span className='text-red-600'>*</span></label>
@@ -826,15 +871,16 @@ function Page() {
                                             multiple
                                         />
                                         {newErrors['thumbs'] && <p className="text-red-700 text-sm">{newErrors['thumbs']}</p>}
-                                        <div className="mt-4">
+                                        {/* <div className="mt-4">
                                             {formData.thumbs.length > 0 && (
-                                                <ul className="list-disc pl-5">
-                                                    {formData.thumbs.map((file, index) => (
-                                                        <li key={index} className="text-gray-700">{file.name}</li>
-                                                    ))}
-                                                </ul>
+                                                thumbs.length files 
+                                                // <ul className="list-disc pl-5">
+                                                //     {formData.thumbs.map((element,index) => (
+                                                //         <li key={index} className="text-gray-700">{element}</li>
+                                                //     ))}
+                                                // </ul>
                                             )}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="flex flex-col mb-4">
                                         <h2 className="text-md font-semibold mb-2 text-gray-800">Add Price Details</h2>
@@ -1051,6 +1097,7 @@ function Page() {
                                             checked={formData.withBus}
                                         />
                                     </div>
+
                                     <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketPrice">Ticket Price <span className='text-red-600'>*</span></label>
                                     <div className="flex flex-col col-span-2">
 
@@ -1065,10 +1112,9 @@ function Page() {
                                         />
                                         {newErrors.ticketPrice && <p className="text-red-700 text-sm">{newErrors.ticketPrice}</p>}
                                     </div>
-                                    <label className="block text-gray-700 text-base font-semibold mb-2 my-5" htmlFor="adultPrice">
-                                        Adult <span className='text-red-600'>*</span>
-                                    </label>
+                                    
                                     <div className="flex flex-col">
+                                    <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Adult Price <span className='text-red-600'>*</span></label>
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1080,7 +1126,7 @@ function Page() {
                                         />
                                     </div>
                                     <div className="flex flex-col">
-
+                                    <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Child Price <span className='text-red-600'>*</span></label>
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1092,7 +1138,7 @@ function Page() {
                                         />
                                     </div>
                                     <div className="flex flex-col">
-
+                                    <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Retired Price <span className='text-red-600'>*</span></label>
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1104,7 +1150,7 @@ function Page() {
                                         />
                                     </div>
                                     <div className="flex flex-col">
-
+                                    <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Student Price <span className='text-red-600'>*</span></label>
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1261,7 +1307,7 @@ function Page() {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="flex justify-center">
+                                <div className="flex justify-end mt-12">
                                     <button
                                         type="submit"
                                         className={`bg-blue-500 text-white py-2 px-4 rounded ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
