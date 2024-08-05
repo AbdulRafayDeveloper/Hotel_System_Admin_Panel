@@ -11,6 +11,7 @@ import { decodeJWT } from "../../components/DecodeJWT";
 import $ from 'jquery'; // Import jQuery
 import 'select2/dist/css/select2.min.css';
 import 'select2';
+import { title } from 'process';
 
 
 function Page() {
@@ -45,15 +46,15 @@ function Page() {
         priceFor:{ adult: 0, child: 0, retired: 0, student: 0 },
         excursionType: "",
         keyPoints: [],
-        consider: [],
+        consider: [0],
         program: [{ description: "", duration: 0 }],
-        start: [],
+        start: [0],
         categories: [],
         goodPlaces: [{ "title": "", "description": "" }],
         goodPlaceThumbs: [],
         priceDetail: {
-            include: [],
-            uninclude: []
+            include: [""],
+            uninclude: [""]
         }
     });
     useEffect(() => {
@@ -93,6 +94,7 @@ function Page() {
             ...prev,
             thumbs: [...prev.thumbs, ...newFiles]
         }));
+        validateForm(formData)
     };
 
     const handleGoodPlaceChange = (index, e) => {
@@ -100,6 +102,7 @@ function Page() {
         const updatedGoodPlaces = [...formData.goodPlaces];
         updatedGoodPlaces[index] = { ...updatedGoodPlaces[index], [name]: value };
         setFormData(prev => ({ ...prev, goodPlaces: updatedGoodPlaces }));
+        validateForm(formData)
     };
 
     const handleThumbChange = (index, e) => {
@@ -107,6 +110,7 @@ function Page() {
         const updatedThumbs = [...formData.goodPlaceThumbs];
         updatedThumbs[index] = file;
         setFormData(prev => ({ ...prev, goodPlaceThumbs: updatedThumbs }));
+        validateForm(formData)
     };
 
     const addGoodPlace = () => {
@@ -115,6 +119,7 @@ function Page() {
             goodPlaces: [...prev.goodPlaces, { "title": "", "description": "" }],
             goodPlaceThumbs: [...prev.goodPlaceThumbs, null],
         }));
+        validateForm(formData)
     };
 
     const handleChange = (e) => {
@@ -126,60 +131,48 @@ function Page() {
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
+        
+    }
 
-        let isValid = true
+    useEffect(() => {
+        validateForm(formData);
+    }, [formData]);
+    
+
+    const validateForm = (formData) =>{
+
+        let isValid = true 
+
         if (!formData.title || formData.title === "") {
             isValid = false;
             errors.title = "Fill in the title";
         } else {
             errors.title = "";
+            newErrors.title = ""
         }
     
-        if (!formData.address?.country || formData.address.country === "") {
+        if (!formData.excursionType) {
             isValid = false;
-            errors.country = "Fill in the country";
+            errors.excursionType = "Fill in the excursion type";
         } else {
-            errors.country = "";
+            errors.excursionType = "";
+            newErrors.excursionType = ""
+        }
+
+        if ( formData.address.country === "" || formData.address.country === "default") {
+            isValid = false;
+            console.log(formData.address.country)
+            
+            errors['address.country'] ="Fill in the country"
+        } else {
+            errors['address.country'] = "";
+            
+            
         }
     
-       /*if (!formData.address?.region || formData.address.region() === "") {
-            isValid = false;
-            errors['address.region'] = "Fill in the region";
-        } else {
-            errors['address.region'] = "";
-        }
-    
-        if (!formData.address?.city || formData.address.city() === "") {
-            isValid = false;
-            errors['address.city'] = "Fill in the city";
-        } else {
-            errors['address.city'] = "";
-        }
-    
-        if (!formData.address?.street || formData.address.street() === "") {
-            isValid = false;
-            errors['address.street'] = "Fill in the street";
-        } else {
-            errors['address.street'] = "";
-        }
-    
-        if (!formData.address?.house || formData.address.house() === "") {
-            isValid = false;
-            errors['address.house'] = "Fill in the house";
-        } else {
-            errors['address.house'] = "";
-        }
-    
-        if (!formData.address?.building || formData.address.building() === "") {
-            isValid = false;
-            errors['address.building'] = "Fill in the building";
-        } else {
-            errors['address.building'] = "";
-        }
-    */
         if (!formData.departure || formData.departure === "") {
             isValid = false;
-            newErrors.departure = "Fill in the departure";
+            errors.departure = "Fill in the departure";
         } else {
             errors.departure = "";
         }
@@ -191,34 +184,13 @@ function Page() {
             errors.arrival = "";
         }
     
-        if (!formData.description || formData.description === "") {
+        if (!formData.description || formData.description.length < 100) {
             isValid = false;
-            errors.description = "Fill in the description";
+            errors.description = 'Description must be at least 100 characters long.';
         } else {
-            errors.description = "";
+            errors.description = ''; // Clear the error if valid
         }
-    /*
-        if (!formData.howToWork || formData.howToWork() === "") {
-            isValid = false;
-            errors.howToWork = "Fill in the how to work";
-        } else {
-            errors.howToWork = "";
-        }
-    
-        if (!formData.typeOfVisit?.typeOf || formData.typeOfVisit.typeOf() === "") {
-            isValid = false;
-            errors['typeOfVisit.typeOf'] = "Fill in the type of visit";
-        } else {
-            errors['typeOfVisit.typeOf'] = "";
-        }
-    
-        if (!formData.typeOfVisit?.maxPeople || formData.typeOfVisit.maxPeople <= 0) {
-            isValid = false;
-            errors['typeOfVisit.maxPeople'] = "Fill in a valid number for max people";
-        } else {
-            errors['typeOfVisit.maxPeople'] = "";
-        }
-    */
+
         if (!formData.duration || formData.duration <= 0) {
             isValid = false;
             errors.duration = "Fill in a valid duration";
@@ -233,19 +205,11 @@ function Page() {
             errors.ticketPrice = "";
         }
     
-        if (!formData.excursionType || formData.excursionType === "") {
+        if (!formData.thumbs  || formData.thumbs.length < 5) {
             isValid = false;
-            errors.excursion = "Fill in the excursion type";
+            errors['thumbs'] = '';
         } else {
-            errors.excursion = "";
-        }
-    
-        if (!formData.keyPoints || formData.keyPoints === "") {
-            isValid = false;
-            errors.keyPoints = "Fill in the key points";
-        } else {
-            errors.keyPoints = "";
-            newErrors.keyPoints = "";
+            errors['thumbs'] = ''; // Clear the error if valid
         }
     
         if (!formData.categories || formData.categories.length === 0) {
@@ -255,52 +219,51 @@ function Page() {
             errors.categories = "";
         }
     
-        if (!formData.goodPlaces?.title ) {
-            isValid = false;
-            errors.goodtitle = "Add at least one good place";
+        if (formData.goodPlaces && Array.isArray(formData.goodPlaces)) {
+            formData.goodPlaces.forEach((place, index) => {
+                if (!place.title) {
+                    errors[`goodPlaces[${index}].title`] = 'Title is required.';
+                    isValid = false;
+                } else {
+                    errors[`goodPlaces[${index}].title`] = '';
+                }
+    
+                if (!place.description) {
+                    errors[`goodPlaces[${index}].description`] = 'Description is required.';
+                    isValid = false;
+                } else {
+                    errors[`goodPlaces[${index}].description`] = '';
+                }
+            });
         } else {
-            errors.goodPlaces = "";
+            newErrors['goodPlaces'] = 'The goodPlaces field must be an array.';
+            isValid = false;
         }
 
         if (!formData.goodPlaces?.description ) {
             isValid = false;
             errors.gooddesrip = "Add at least one good place";
         } else {
-            errors.goodPlaces = "";
+            errors.gooddesrip = "";
         }
     
         if (!formData.goodPlaceThumbs || formData.goodPlaceThumbs.length === 0) {
             isValid = false;
-            errors.goodPlaceThumbs = "Upload at least one thumbnail for good places";
+            errors['goodPlaceThumbs'] = '';
         } else {
-            errors.goodPlaceThumbs = "";
+            errors['goodPlaceThumbs'] = ''; // Clear the error if valid
         }
-    };
 
-    // Update a specific item in the include or uninclude arrays
-   /* const handlePriceDetailChange = (arrayName, arrayIndex, value) => {
-        setFormData(prev => ({
-            ...prev,
-            priceDetail: {
-                ...prev.priceDetail,
-                [arrayName]: prev.priceDetail[arrayName].map((item, i) =>
-                    i === arrayIndex ? value : item
-                )
-            }
-        }));
-    };
-
-    // Add a new entry to include and uninclude arrays
-    const addPriceDetail = () => {
-        setFormData(prev => ({
-            ...prev,
-            priceDetail: {
-                include: [...prev.priceDetail.include, ""],
-                uninclude: [...prev.priceDetail.uninclude, ""]
-            }
-        }));
-    };
-*/
+        if (!formData.keyPoints || formData.keyPoints.length === 0) {
+            isValid = false;
+            errors['keyPoints'] = 'Select Keypoints';
+        } else {
+            errors['keyPoints'] = ''; // Clear the error if valid
+        }
+        
+       return isValid
+    }
+        
     const handlePriceForChange = (e) => {
         const { name, value } = e.target;
     
@@ -330,8 +293,10 @@ function Page() {
                 }
                 return Array.from(categoriesSet);
             }, [...prev.categories]);
-    
+            
+            validateForm(formData)
             return { ...prev, categories: updatedCategories };
+
         });
     };
     
@@ -456,10 +421,29 @@ function Page() {
             }
         });
     };
+
+    const handleCountry = (e) => {
+        const { name, value } = e.target;
+
+        setFormData(prev => {
+            const updatedFormData = {
+                ...prev,
+                address: {
+                    ...prev.address,
+                    country: value
+                }
+            };
+
+            // Call validateForm with updated form data
+            validateForm(updatedFormData);
+
+            return updatedFormData;
+        });
+    };
     
     const [errors, setErrors] = useState({
-        title: '',
-        country: "",
+        title: "",
+      //  country: "",
         region: "",
         city: "",
         street: "",
@@ -473,12 +457,12 @@ function Page() {
         maxPeople: "",
         duration: "",
         ticketPrice: "",
-        excursion: "",
-        keyPoints: "",
+        excursionType: "",
+        'keyPoints': "",
         categories: "",
-        goodtitle: "",
-        gooddesrip: "",
-        goodPlaceThumbs:"",
+     //   goodtitle: "",
+     //   gooddesrip: "",
+        'goodPlaceThumbs':"",
         building: "",
         city: "",
         country:"",
@@ -488,6 +472,9 @@ function Page() {
         region: "",
         street: "",
         typeOf:"",
+        'address.country': "",
+        'goodPlaces': "",
+        'thumbs': ""
     });
     let [newErrors, setnew]= useState({...errors})
 
@@ -499,19 +486,21 @@ function Page() {
         // Define required fields and nested fields
         const requiredFields = [
             'title',
-            'country',
-            'thumbnails',
             'departure',
+          //  'country',
             'arrival',
             'description',
             'duration',
             'ticketPrice',
-            "goodtitle",
-            "gooddesrip",
-            "goodPlaceThumbs",
-            'exrusion',
+            'excursionType',
             'keyPoints',
-            'categories'
+            'categories',
+           // 'goodtitle',
+           // 'gooddesrip',
+            'goodPlaceThumbs',
+            'address.country',
+            'goodPlaces',
+            'thumbs'
         ];
     
         // Check required fields
@@ -527,15 +516,66 @@ function Page() {
 
             console.log('value2:', value)
     
-            if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && !Object.keys(value).length)) {
+            if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && !Object.keys(value).length) ) {
                 isValid = false;
                 newErrors[field] = 'This field is required.';
                 console.log('field: ',field)
             } else {
-                newErrors[field] = ''; // Clear the error if valid
+                newErrors[field] = ''; 
+                newErrors.field = ""// Clear the error if valid
             }
         });
+
+        if (formData.goodPlaces && Array.isArray(formData.goodPlaces)) {
+            formData.goodPlaces.forEach((place, index) => {
+                if (!place.title) {
+                    isValid = false;
+                    newErrors[`goodPlaces[${index}].title`] = 'Title is required.';
+                } else {
+                    newErrors[`goodPlaces[${index}].title`] = '';
+                }
     
+                if (!place.description) {
+                    isValid = false;
+                    newErrors[`goodPlaces[${index}].description`] = 'Description is required.';
+                } else {
+                    newErrors[`goodPlaces[${index}].description`] = '';
+                }
+            });
+        } else {
+            isValid = false;
+            newErrors['goodPlaces'] = 'The goodPlaces field must be an array.';
+        }
+    
+        if (!formData.goodPlaceThumbs || formData.goodPlaceThumbs.length === 0) {
+            isValid = false;
+            newErrors['goodPlaceThumbs'] = 'Upload at least one thumbnail for good places.';
+        } else {
+            newErrors['goodPlaceThumbs'] = ''; // Clear the error if valid
+        }
+
+
+        if (!formData.thumbs || formData.thumbs.length < 5) {
+            isValid = false;
+            newErrors['thumbs'] = 'Upload at least 5 thumbnails for good places.';
+        } else {
+            newErrors['thumbs'] = ''; // Clear the error if valid
+        }
+
+        if (!formData.description || formData.description.length < 100) {
+            isValid = false;
+            newErrors['description'] = 'Description must be at least 100 characters long.';
+        } else {
+            newErrors['description'] = ''; // Clear the error if valid
+        }
+
+        if (!formData.keyPoints || formData.keyPoints.length === 0) {
+            isValid = false;
+            newErrors['keyPoints'] = 'Select keypoints';
+        } else {
+            newErrors['keyPoints'] = ''; // Clear the error if valid
+        }
+
         // Check numeric fields
         const numericFields = ['duration', 'ticketPrice'];
         numericFields.forEach((field) => {
@@ -612,7 +652,10 @@ function Page() {
             console.log(errors.title)
             console.log(errors.keyPoints)
             console.log(newErrors.title)
-            console.log(errors.country)
+            console.log('goodplaces',newErrors['goodPlaces[0].title'])
+            console.log('goodplaces errors',errors['goodPlaces'])
+            console.log('duration new',newErrors.duration)
+            console.log('duration new',errors.duration)
           //  console.log(newErrors.address.country)
             Swal.fire('Error!', 'PLease resolve all the errors', 'error');
         }
@@ -631,7 +674,7 @@ function Page() {
                                 <h1 className='text-2xl font-medium text-center pb-7 text-gray-800 pt-4'>Add Excursions</h1>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-[13.9px]" htmlFor="title">Title</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-[13.9px]" htmlFor="title">Title <span className='text-red-600'>*</span></label>
                                         
                                         <input
                                             type="text"
@@ -652,18 +695,16 @@ function Page() {
                                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                                 name="address-country"
                                                 id="address-country"
-                                                onChange={(e) => setFormData(prev => ({
-                                                    ...prev,
-                                                    address: { ...prev.address, country: e.target.value }
-                                                }))}
+                                                onChange={handleCountry}
                                                 value={formData.address.country}
                                             >
-                                                <option value="">Select Country</option>
+                                                <option value="">Select Country <span className='text-red-600'>*</span></option>
                                                 <option value="Russia">Russia</option>
                                                 <option value="Abkhazia">Abkhazia</option>
                                             </select>
                                             
-                                            {errors.country && <p className="text-red-700 text-sm">{errors.country}</p>}
+                                            {newErrors['address.country'] && <p className="text-red-700 text-sm">{newErrors['address.country']}</p>}
+                                            
                                         </div>
                                         <div className="flex flex-col">
                                             
@@ -743,7 +784,7 @@ function Page() {
                                     </div>
 
                                     <div className="flex flex-col mb-4">
-                                        <h2 className="text-md font-semibold mb-2 text-gray-800">Add Good Place</h2>
+                                        <h2 className="text-md font-semibold mb-2 text-gray-800">Add Good Place <span className='text-red-600'>*</span></h2>
                                         {formData.goodPlaces.map((place, index) => (
                                             <div key={index} className="flex flex-col mb-4  p-4 ">
                                                 <div className="flex flex-col mb-2">
@@ -756,7 +797,7 @@ function Page() {
                                                         onChange={(e) => handleGoodPlaceChange(index, e)}
                                                         placeholder="Enter title"
                                                     />
-                                                    {errors.goodtitle && <p className="text-red-700 text-sm">{errors.goodtitle}</p>}
+                                                    {newErrors['goodPlaces[0].title'] && <p className="text-red-700 text-sm">{newErrors['goodPlaces[0].title'] }</p>}
                                                 </div>
                                                 <div className="flex flex-col mb-2">
                                                     <textarea
@@ -767,7 +808,7 @@ function Page() {
                                                         onChange={(e) => handleGoodPlaceChange(index, e)}
                                                         placeholder="Enter description"
                                                     />
-                                                    {errors.gooddesrip && <p className="text-red-700 text-sm">{errors.gooddesrip}</p>}
+                                                    {newErrors['goodPlaces[0].description'] && <p className="text-red-700 text-sm">{newErrors['goodPlaces[0].description'] }</p>}
                                                 </div>
                                                 <div className="flex flex-col mb-2">
                                                     <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor={`thumb-${index}`}>Good Place Thumbnail</label>
@@ -778,7 +819,7 @@ function Page() {
                                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                                         onChange={(e) => handleThumbChange(index, e)}
                                                     />
-                                                    {errors.goodPlaceThumbs && <p className="text-red-700 text-sm">{errors.goodPlaceThumbs}</p>}
+                                                    {newErrors['goodPlaceThumbs'] && <p className="text-red-700 text-sm">{newErrors['goodPlaceThumbs']}</p>}
                                                 </div>
                                                 <button
                                                     type="button"
@@ -798,7 +839,7 @@ function Page() {
                                     </div>
 
                                     <div className="flex flex-col col-span-2">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="thumbs">Thumbnails</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="thumbs">Thumbnails <span className='text-red-600'>*</span></label>
                                         <input
                                             type="file"
                                             className="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -807,7 +848,7 @@ function Page() {
                                             onChange={handleThumbfileChange}
                                             multiple
                                         />
-                                        {errors.description && <p className="text-red-700 text-sm">{errors.description}</p>}
+                                        {newErrors['thumbs'] && <p className="text-red-700 text-sm">{newErrors['thumbs']}</p>}
                                         <div className="mt-4">
                                             {formData.thumbs.length > 0 && (
                                                 <ul className="list-disc pl-5">
@@ -916,7 +957,7 @@ function Page() {
 
 
                                     <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="categories">Categories</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="categories">Categories <span className='text-red-600'>*</span></label>
                                         <select
                                             multiple
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -932,7 +973,7 @@ function Page() {
                                                 </option>
                                             ))}
                                         </select>
-                                        {errors.categories && <p className="text-red-700 text-sm">{errors.categories}</p>}
+                                        {newErrors.categories && <p className="text-red-700 text-sm">{newErrors.categories}</p>}
 
                                         <div className="mt-4">
                                             <h2 className="text-lg font-semibold text-gray-800">Selected Categories:</h2>
@@ -950,7 +991,7 @@ function Page() {
                                         </div>
                                     </div>
                                     <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="departure">Departure</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="departure">Departure <span className='text-red-600'>*</span></label>
                                         <input
                                             type="text"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -960,11 +1001,11 @@ function Page() {
                                             placeholder="Enter departure time"
                                             value={formData.departure}
                                         />
-                                        {errors.departure && <p className="text-red-700 text-sm">{errors.departure}</p>}
+                                        {newErrors.departure && <p className="text-red-700 text-sm">{newErrors.departure}</p>}
                                     </div>
 
                                     <div className="flex flex-col">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="arrival">Arrival</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="arrival">Arrival <span className='text-red-600'>*</span></label>
                                         <input
                                             type="text"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -974,11 +1015,11 @@ function Page() {
                                             placeholder="Enter arrival time"
                                             value={formData.arrival}
                                         />
-                                        {errors.arrival && <p className="text-red-700 text-sm">{errors.arrival}</p>}
+                                        {newErrors.arrival && <p className="text-red-700 text-sm">{newErrors.arrival}</p>}
                                     </div>
 
                                     <div className="flex flex-col col-span-2">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="description">Description</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="description">Description <span className='text-red-600'>*</span></label>
                                         <textarea
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             name="description"
@@ -987,6 +1028,7 @@ function Page() {
                                             placeholder="Enter description"
                                             value={formData.description}
                                         />
+                                        {newErrors.description && <p className="text-red-700 text-sm">{newErrors.description}</p>}
                                     </div>
 
                                     <div className="flex flex-col col-span-2">
@@ -1032,7 +1074,7 @@ function Page() {
                                     </div>
 
                                     <div className="flex flex-col col-span-2">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="duration">Duration</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="duration">Duration <span className='text-red-600'>*</span></label>
                                         <input
                                             type="text"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1069,7 +1111,7 @@ function Page() {
                                         />
                                     </div>
 
-                                    <lab className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketPrice">Ticket Price</lab>
+                                    <lab className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketPrice">Ticket Price <span className='text-red-600'>*</span></lab>
                                     <div className="flex flex-col col-span-2">
                                         
                                         <input
@@ -1081,7 +1123,7 @@ function Page() {
                                             placeholder="Enter ticket price"
                                             value={formData.ticketPrice}
                                         />
-                                        {errors.ticketPrice && <p className="text-red-700 text-sm">{errors.ticketPrice}</p>}
+                                        {newErrors.ticketPrice && <p className="text-red-700 text-sm">{newErrors.ticketPrice}</p>}
                                     </div>
 
                                     <div className="flex flex-col">
@@ -1136,7 +1178,7 @@ function Page() {
                                     {/* Extra fields */}
 
                                     <div className="flex flex-col col-span-2">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="excursionType">Excursion Type</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="excursionType">Excursion Type <span className='text-red-600'>*</span></label>
                                         <input
                                             type="text"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1146,10 +1188,10 @@ function Page() {
                                             placeholder="Enter excursion type"
                                             value={formData.excursionType}
                                         />
-                                        {errors.excursion && <p className="text-red-700 text-sm">{errors.excursion}</p>}
+                                        {newErrors.excursionType && <p className="text-red-700 text-sm">{newErrors.excursionType}</p>}
                                     </div>
                                     <div className="flex flex-col col-span-2">
-                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="keyPoints">keyPoints</label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="keyPoints">keyPoints <span className='text-red-600'>*</span></label>
                                         <select
                                             multiple
                                             id="keyPoints"
@@ -1169,7 +1211,7 @@ function Page() {
 
                                             ))}
                                         </select>
-                                        {errors.keyPoints && <p className="text-red-700 text-sm">{errors.keyPoints}</p>}
+                                        {newErrors.keyPoints && <p className="text-red-700 text-sm">{newErrors.keyPoints}</p>}
                                     </div>
                                     <div className="flex flex-col col-span-2 mt-4">
                                         <label className="block text-gray-700 text-base font-semibold mb-2">Selected keyPoints</label>
