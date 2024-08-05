@@ -1022,9 +1022,7 @@ function Page({ params }) {
 
                                     <div className="flex flex-col mb-4">
                                         <h2 className="text-md font-semibold mb-2 text-gray-800">Type Of Visit</h2>
-
                                         <div className="flex flex-col mb-2">
-
                                             <input
                                                 type="text"
                                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1112,9 +1110,9 @@ function Page({ params }) {
                                         />
                                         {newErrors.ticketPrice && <p className="text-red-700 text-sm">{newErrors.ticketPrice}</p>}
                                     </div>
-                                    
+
                                     <div className="flex flex-col">
-                                    <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Adult Price <span className='text-red-600'>*</span></label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Adult Price <span className='text-red-600'>*</span></label>
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1126,7 +1124,7 @@ function Page({ params }) {
                                         />
                                     </div>
                                     <div className="flex flex-col">
-                                    <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Child Price <span className='text-red-600'>*</span></label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Child Price <span className='text-red-600'>*</span></label>
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1138,7 +1136,7 @@ function Page({ params }) {
                                         />
                                     </div>
                                     <div className="flex flex-col">
-                                    <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Retired Price <span className='text-red-600'>*</span></label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Retired Price <span className='text-red-600'>*</span></label>
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1150,7 +1148,7 @@ function Page({ params }) {
                                         />
                                     </div>
                                     <div className="flex flex-col">
-                                    <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Student Price <span className='text-red-600'>*</span></label>
+                                        <label className="block text-gray-700 text-base font-semibold mb-1" htmlFor="ticketPrice">Student Price <span className='text-red-600'>*</span></label>
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

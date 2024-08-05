@@ -83,7 +83,6 @@ function Page() {
 
         fetchkeyPoints();
         fetchCategory();
-        console.log(formData.consider)
     }, [router]);
 
     const handleThumbfileChange = (event) => {
@@ -186,7 +185,7 @@ function Page() {
             isValid = false;
             errors.description = 'Description must be at least 100 characters long.';
         } else {
-            errors.description = ''; // Clear the error if valid
+            errors.description = '';
         }
 
         if (!formData.duration || formData.duration <= 0) {
@@ -207,7 +206,7 @@ function Page() {
             isValid = false;
             errors['thumbs'] = '';
         } else {
-            errors['thumbs'] = ''; // Clear the error if valid
+            errors['thumbs'] = '';
         }
 
         if (!formData.categories || formData.categories.length === 0) {
@@ -263,7 +262,7 @@ function Page() {
             isValid = false;
             errors['keyPoints'] = 'Select Keypoints';
         } else {
-            errors['keyPoints'] = ''; // Clear the error if valid
+            errors['keyPoints'] = '';
         }
 
         return isValid
@@ -482,7 +481,6 @@ function Page() {
         const requiredFields = [
             'title',
             'departure',
-            //  'country',
             'arrival',
             'description',
             'duration',
@@ -538,28 +536,28 @@ function Page() {
             isValid = false;
             newErrors['goodPlaceThumbs'] = 'Upload at least one thumbnail for good places.';
         } else {
-            newErrors['goodPlaceThumbs'] = ''; // Clear the error if valid
+            newErrors['goodPlaceThumbs'] = '';
         }
 
         if (!formData.thumbs || formData.thumbs.length < 5) {
             isValid = false;
             newErrors['thumbs'] = 'Upload at least 5 thumbnails for good places.';
         } else {
-            newErrors['thumbs'] = ''; // Clear the error if valid
+            newErrors['thumbs'] = '';
         }
 
         if (!formData.description || formData.description.length < 100) {
             isValid = false;
             newErrors['description'] = 'Description must be at least 100 characters long.';
         } else {
-            newErrors['description'] = ''; // Clear the error if valid
+            newErrors['description'] = '';
         }
 
         if (!formData.keyPoints || formData.keyPoints.length === 0) {
             isValid = false;
             newErrors['keyPoints'] = 'Select keypoints';
         } else {
-            newErrors['keyPoints'] = ''; // Clear the error if valid
+            newErrors['keyPoints'] = '';
         }
 
         // Check numeric fields
@@ -570,7 +568,7 @@ function Page() {
                 isValid = false;
                 newErrors[field] = 'Please enter a valid number greater than zero.';
             } else {
-                newErrors[field] = ''; // Clear the error if valid
+                newErrors[field] = '';
             }
         });
 
@@ -588,7 +586,6 @@ function Page() {
             }
         }
 
-        // Set errors state
         setErrors(newErrors);
 
         if (isValid) {
@@ -600,7 +597,6 @@ function Page() {
                     submissionData.append('thumbs', file);
                 });
 
-                // submissionData.append('title', JSON.stringify(formData.title));
                 submissionData.append('title', formData.title);
                 submissionData.append('address', JSON.stringify(formData.address));
                 submissionData.append('goodPlaces', JSON.stringify(formData.goodPlaces));
@@ -653,7 +649,6 @@ function Page() {
                     });
                 }
             } catch (error) {
-                console.error("Error submitting form:", error);
                 Swal.fire('Error!', "Form Not submitted", 'error');
             } finally {
                 setLoading(false);
@@ -796,7 +791,7 @@ function Page() {
                                                         onChange={(e) => handleGoodPlaceChange(index, e)}
                                                         placeholder="Enter title"
                                                     />
-                                                    {newErrors[ `goodPlaces[${index}].title` ] && <p className="text-red-700 text-sm">{newErrors[ `goodPlaces[${index}].title` ]}</p>}
+                                                    {newErrors[`goodPlaces[${index}].title`] && <p className="text-red-700 text-sm">{newErrors[`goodPlaces[${index}].title`]}</p>}
                                                 </div>
                                                 <div className="flex flex-col mb-2">
                                                     <textarea
@@ -998,9 +993,7 @@ function Page() {
 
                                     <div className="flex flex-col mb-4">
                                         <h2 className="text-md font-semibold mb-2 text-gray-800">Type Of Visit</h2>
-
                                         <div className="flex flex-col mb-2">
-
                                             <input
                                                 type="text"
                                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1008,8 +1001,7 @@ function Page() {
                                                 name="typeof"
                                                 value={formData.typeOfVisit.typeof}
                                                 onChange={handleTicketOfVisitChange}
-                                                placeholder="Enter type of ticket"
-                                            />
+                                                placeholder="Enter type of ticket" />
                                         </div>
 
                                         <div className="flex flex-col mb-2">
@@ -1021,8 +1013,7 @@ function Page() {
                                                 name="maxPeople"
                                                 value={formData.typeOfVisit.maxPeople}
                                                 onChange={handleTicketOfVisitChange}
-                                                placeholder="Enter max number of people"
-                                            />
+                                                placeholder="Enter max number of people" />
                                         </div>
                                     </div>
 
@@ -1035,16 +1026,14 @@ function Page() {
                                             id="duration"
                                             onChange={handleChange}
                                             placeholder="Enter duration"
-                                            value={formData.duration}
-                                        />
+                                            value={formData.duration} />
                                         {newErrors.duration && <p className="text-red-700 text-sm">{newErrors.duration}</p>}
                                     </div>
 
                                     <div className="flex items-center mb-2">
                                         <label
                                             className="text-gray-700 text-base font-semibold mr-6"
-                                            htmlFor="withGuider"
-                                        >
+                                            htmlFor="withGuider">
                                             With Guider
                                         </label>
                                         <input
@@ -1053,15 +1042,13 @@ function Page() {
                                             name="withGuider"
                                             id="withGuider"
                                             onChange={handleChange}
-                                            checked={formData.withGuider}
-                                        />
+                                            checked={formData.withGuider} />
                                     </div>
 
                                     <div className="flex items-center mb-2">
                                         <label
                                             className="text-gray-700 text-base font-semibold mr-6"
-                                            htmlFor="withBus"
-                                        >
+                                            htmlFor="withBus">
                                             With Bus
                                         </label>
                                         <input
@@ -1070,12 +1057,10 @@ function Page() {
                                             name="withBus"
                                             id="withBus"
                                             onChange={handleChange}
-                                            checked={formData.withBus}
-                                        />
+                                            checked={formData.withBus} />
                                     </div>
                                     <label className="block text-gray-700 text-base font-semibold mb-2" htmlFor="ticketPrice">Ticket Price <span className='text-red-600'>*</span></label>
                                     <div className="flex flex-col col-span-2">
-
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1083,13 +1068,9 @@ function Page() {
                                             id="ticketPrice"
                                             onChange={handleChange}
                                             placeholder="Enter ticket price"
-                                            value={formData.ticketPrice}
-                                        />
+                                            value={formData.ticketPrice} />
                                         {newErrors.ticketPrice && <p className="text-red-700 text-sm">{newErrors.ticketPrice}</p>}
                                     </div>
-                                    <label className="block text-gray-700 text-base font-semibold mb-2 my-5" htmlFor="adultPrice">
-                                        Adult <span className='text-red-600'>*</span>
-                                    </label>
                                     <div className="flex flex-col">
                                         <input
                                             type="number"
@@ -1098,11 +1079,9 @@ function Page() {
                                             id="adultPrice"
                                             onChange={handlePriceForChange}
                                             value={formData.priceFor.adult || ''}
-                                            placeholder="Enter price for adults"
-                                        />
+                                            placeholder="Enter price for adults" />
                                     </div>
                                     <div className="flex flex-col">
-
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1110,11 +1089,9 @@ function Page() {
                                             id="childPrice"
                                             onChange={handlePriceForChange}
                                             value={formData.priceFor.child || ''}
-                                            placeholder="Enter price for children"
-                                        />
+                                            placeholder="Enter price for children" />
                                     </div>
                                     <div className="flex flex-col">
-
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1122,11 +1099,9 @@ function Page() {
                                             id="retiredPrice"
                                             onChange={handlePriceForChange}
                                             value={formData.priceFor.retired || ''}
-                                            placeholder="Enter price for retired"
-                                        />
+                                            placeholder="Enter price for retired" />
                                     </div>
                                     <div className="flex flex-col">
-
                                         <input
                                             type="number"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -1134,8 +1109,7 @@ function Page() {
                                             id="studentPrice"
                                             onChange={handlePriceForChange}
                                             value={formData.priceFor.student || ''}
-                                            placeholder="Enter price for students"
-                                        />
+                                            placeholder="Enter price for students" />
                                     </div>
 
                                     <div className="flex flex-col col-span-2">
@@ -1147,8 +1121,7 @@ function Page() {
                                             id="excursionType"
                                             onChange={handleChange}
                                             placeholder="Enter excursion type"
-                                            value={formData.excursionType}
-                                        />
+                                            value={formData.excursionType} />
                                         {newErrors.excursionType && <p className="text-red-700 text-sm">{newErrors.excursionType}</p>}
                                     </div>
                                     <div className="flex flex-col col-span-2">
@@ -1158,15 +1131,12 @@ function Page() {
                                             id="keyPoints"
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pl-4"
                                             onChange={handlekeyPointsChange}
-                                            value={formData.keyPoints.map(kp => kp.label)}
-                                        >
-
+                                            value={formData.keyPoints.map(kp => kp.label)}>
                                             {keyPointsOptions.map((option, index) => (
                                                 <option
                                                     key={index}
                                                     value={option.label}
-                                                    data-color={option.color}
-                                                >
+                                                    data-color={option.color}>
                                                     {option.label}
                                                 </option>
 
@@ -1197,13 +1167,11 @@ function Page() {
                                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                                     placeholder="Enter start value"
                                                     value={item}
-                                                    onChange={(e) => handleConsiderChange(index, e)}
-                                                />
+                                                    onChange={(e) => handleConsiderChange(index, e)} />
                                                 <button
                                                     type="button"
                                                     className="bg-red-500 text-white py-1 px-2 rounded"
-                                                    onClick={() => removeConsider(index)}
-                                                >
+                                                    onClick={() => removeConsider(index)}>
                                                     Remove
                                                 </button>
                                             </div>
@@ -1211,8 +1179,7 @@ function Page() {
                                         <button
                                             type="button"
                                             className="bg-blue-500 text-white py-2 px-4 rounded"
-                                            onClick={addConsider}
-                                        >
+                                            onClick={addConsider}>
                                             Add More Fields
                                         </button>
                                     </div>
@@ -1227,21 +1194,18 @@ function Page() {
                                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                                     placeholder="Enter description"
                                                     value={item.description}
-                                                    onChange={(e) => handleProgramChange(index, e)}
-                                                />
+                                                    onChange={(e) => handleProgramChange(index, e)} />
                                                 <input
                                                     type="number"
                                                     name="duration"
                                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                                     placeholder="Enter duration"
                                                     value={item.duration}
-                                                    onChange={(e) => handleProgramChange(index, e)}
-                                                />
+                                                    onChange={(e) => handleProgramChange(index, e)} />
                                                 <button
                                                     type="button"
                                                     className="bg-red-500 text-white py-1 px-2 mt-2 rounded"
-                                                    onClick={() => removeProgram(index)}
-                                                >
+                                                    onClick={() => removeProgram(index)}>
                                                     Remove
                                                 </button>
                                             </div>
@@ -1249,8 +1213,7 @@ function Page() {
                                         <button
                                             type="button"
                                             className="bg-blue-500 text-white py-2 px-4 rounded"
-                                            onClick={addProgram}
-                                        >
+                                            onClick={addProgram}>
                                             Add More Program
                                         </button>
                                     </div>
@@ -1263,13 +1226,11 @@ function Page() {
                                                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                                     placeholder="Enter start value"
                                                     value={item}
-                                                    onChange={(e) => handleStartChange(index, e)}
-                                                />
+                                                    onChange={(e) => handleStartChange(index, e)} />
                                                 <button
                                                     type="button"
                                                     className="bg-red-500 text-white py-1 px-2 rounded"
-                                                    onClick={() => removeStart(index)}
-                                                >
+                                                    onClick={() => removeStart(index)}>
                                                     Remove
                                                 </button>
                                             </div>
@@ -1277,8 +1238,7 @@ function Page() {
                                         <button
                                             type="button"
                                             className="bg-blue-500 text-white py-2 px-4 rounded"
-                                            onClick={addStart}
-                                        >
+                                            onClick={addStart}>
                                             Add More Start
                                         </button>
                                     </div>
@@ -1287,8 +1247,7 @@ function Page() {
                                     <button
                                         type="submit"
                                         className={`bg-blue-500 text-white py-2 px-4 rounded ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        disabled={loading}
-                                    >
+                                        disabled={loading}>
                                         {loading ? 'Submitting...' : 'Submit'}
                                     </button>
                                 </div>
